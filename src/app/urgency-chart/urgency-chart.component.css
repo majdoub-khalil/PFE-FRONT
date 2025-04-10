@@ -1,0 +1,11 @@
+.chart-card {
+    width: 80%;
+    margin: auto;
+    text-align: center;
+  }
+  
+  p-chart {
+    display: block;
+    height: 400px;
+  }
+  

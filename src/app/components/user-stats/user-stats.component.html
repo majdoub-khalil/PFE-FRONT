@@ -1,0 +1,10 @@
+<div *ngIf="chartLabels.length">
+    <h2>Producer Statistics</h2>
+    <canvas baseChart
+      [datasets]="[{ data: chartData, label: 'Total' }]"
+      [labels]="chartLabels"
+      [options]="chartOptions"
+      [chartType]="chartType">
+    </canvas>
+  </div>
+  

@@ -1,0 +1,30 @@
+<!-- editpage.component.html -->
+<div class="edit-task">
+    <h2>Edit Task</h2>
+    <form (ngSubmit)="updateTask()">
+      <label for="title">Title:</label>
+      <input id="title" [(ngModel)]="task.title" name="title" required />
+  
+      <label for="description">Description:</label>
+      <textarea id="description" [(ngModel)]="task.description" name="description" required></textarea>
+  
+      <label for="taskStatus">Status:</label>
+      <select id="taskStatus" [(ngModel)]="task.taskStatus" name="taskStatus" required>
+        <option value="Pending">Pending</option>
+        <option value="Done">Done</option>
+      </select>
+      
+      <label for="taskUrgency">Urgency:</label>
+      <select id="taskUrgency" [(ngModel)]="task.taskUrgency" name="taskUrgency" required>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="critical">Critical</option>
+      </select>
+      
+      <label for="dueDate">Due Date:</label>
+      <input id="dueDate" [(ngModel)]="task.dueDate" name="dueDate" type="date" required />
+  
+      <button type="submit">Update Task</button>
+    </form>
+  </div>
+  

@@ -1,0 +1,13 @@
+
+<form (ngSubmit)="createUser()">
+    <input type="text" [(ngModel)]="user.username" name="username" placeholder="Username" required />
+    <input type="text" [(ngModel)]="user.fullName" name="fullName" placeholder="Full Name" required />
+    
+    <select [(ngModel)]="user.role" name="role">
+      <option value="PRODUCER">PRODUCER</option>
+      <option value="PILOT">PILOT</option>
+    </select>
+  
+    <button type="submit">Create User</button>
+  </form>
+  

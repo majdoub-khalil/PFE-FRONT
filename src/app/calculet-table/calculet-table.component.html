@@ -1,0 +1,90 @@
+<section class="wrapper">
+  <!-- 🔹 Producers Table -->
+  <h3>Producers Table</h3>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Unites Traitées</th>
+          <th>Unites Bloquées</th>
+          <th>Unites En Cours</th>
+          <th>Reste à Faire</th>
+          <th>Dépassement</th>
+          <th>Staffing</th>
+          <th>Objectifs Individuels</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let user of users">
+          <tr *ngIf="user.role === 'PRODUCER' && user.producerData">
+            <td>{{ user.fullName }}</td>
+            <td><input [(ngModel)]="user.producerData.unitesTraites" /></td>
+            <td><input [(ngModel)]="user.producerData.unitesBloques" /></td>
+            <td><input [(ngModel)]="user.producerData.unitesEnCours" /></td>
+            <td><input [(ngModel)]="user.producerData.resteAFaire" /></td>
+            <td><input [(ngModel)]="user.producerData.depassement" /></td>
+            <td><input [(ngModel)]="user.producerData.staffingPlanning" /></td>
+            <td><input [(ngModel)]="user.producerData.objectifsIndiv" /></td>
+            <td>
+              <button class="normal-btn"  (click)="saveProducerData(user)">Save</button>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 🔹 Pilots Table -->
+  <h3>Pilots Table</h3>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Quantité Cumulée</th>
+          <th>Quantité Cible</th>
+          <th>Prévisionnel Orange</th>
+          <th>Production KM</th>
+          <th>KM Bloqués</th>
+          <th>KM En Cours</th>
+          <th>RAF</th>
+          <th>Dépassement</th>
+          <th>Staffing</th>
+          <th>Objectifs Communs</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let user of users">
+          <tr *ngIf="user.role === 'PILOT' && user.pilotData">
+            <td>{{ user.fullName }}</td>
+            <td><input [(ngModel)]="user.pilotData.quantiteCumulee" /></td>
+            <td><input [(ngModel)]="user.pilotData.quantiteCible" /></td>
+            <td><input [(ngModel)]="user.pilotData.previsionnelOrange" /></td>
+            <td><input [(ngModel)]="user.pilotData.productionKm" /></td>
+            <td><input [(ngModel)]="user.pilotData.kmBloques" /></td>
+            <td><input [(ngModel)]="user.pilotData.kmEnCours" /></td>
+            <td><input [(ngModel)]="user.pilotData.raf" /></td>
+            <td><input [(ngModel)]="user.pilotData.depassement" /></td>
+            <td><input [(ngModel)]="user.pilotData.staffingPlanning" /></td>
+            <td><input [(ngModel)]="user.pilotData.objectifsCommun" /></td>
+            <td>
+              <button class="normal-btn"  (click)="savePilotData(user)">Save</button>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Centered Statistics Button -->
+  <div class="button-container">
+    <button class="stats-btn" (click)="navigateToUserStats()">
+      <i class="fas fa-chart-pie"></i> <!-- FontAwesome chart icon -->
+      View Statistics
+    </button>
+  </div>
+</section>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

@@ -1,0 +1,11 @@
+<p-card>
+    <ng-template pTemplate="header">
+      <h2>Task Urgency Chart</h2>
+    </ng-template>
+  
+    <ng-template pTemplate="content">
+      <canvas #urgencyChart></canvas>
+      <p-button label="Refresh Chart" icon="pi pi-refresh" (click)="loadChart()"></p-button>
+    </ng-template>
+  </p-card>
+  

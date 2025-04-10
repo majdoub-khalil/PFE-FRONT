@@ -1,0 +1,183 @@
+.calculet-container {
+  max-width: 100%;
+  margin: 20px auto;
+  padding: 30px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+}
+
+.table-title {
+  font-size: 1.8em;
+  color: #151b21;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.p-datatable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 8px 10px; /* Reduced padding for table cells */
+  text-align: center;
+  border: 1px solid #ddd;
+  font-size: 0.95em;
+  font-weight: 500;
+}
+
+th {
+  background-color: #1b62ae;
+  color: white;
+  font-weight: bold;
+}
+
+input {
+  width: 90%; /* Reduced width to leave some space between input and border */
+  padding: 6px; /* Reduced padding to make the input smaller */
+  border-radius: 4px; /* Slightly smaller border radius for a cleaner look */
+  border: 1px solid #ccc;
+  background-color: #f8f9fa;
+  font-size: 0.95em;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  border-color: #007bff;
+  outline: none;
+  background-color: #ffffff;
+}
+
+.p-button-primary {
+  background-color: #ff8800;
+  border-color: #ff8800;
+  border-radius: 10px;
+  padding: 8px 15px;
+  font-size: 0.9em;
+}
+
+.p-button-primary:hover {
+  background-color: #b35100;
+  border-color: #0056b3;
+}
+
+
+
+/* Default button styles */
+.normal-btn {
+  background-color: #ff9900;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s ease;
+}
+.button-container {
+  display: flex;
+  justify-content: center; /* Horizontally center the button */
+  align-items: center;     /* Vertically center the button */
+  margin-top: 30px;         /* Adds space above the button */
+  width: 100%;              /* Ensure container takes full width */
+}
+.stats-btn {
+  background-color: #c01808 !important;  /* Red background */
+  color: rgb(237, 240, 238) !important;
+  border: none !important;
+  border-radius: 50px !important;
+  padding: 16px 35px !important;  /* Larger padding */
+  font-size: 18px !important;      /* Increased font size */
+  font-weight: bold !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background-color 0.3s ease;
+}
+
+.stats-btn:hover {
+  background-color: #6d42db !important;  /* Slightly darker red on hover */
+}
+
+/* Icon style inside the stats button */
+.stats-btn i {
+  margin-right: 10px !important;  /* Adds space between the icon and text */
+}
+
+
+button:hover {
+  background-color: #0056b3;
+}
+
+table input {
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .calculet-container {
+    padding: 15px;
+  }
+
+  th, td {
+    font-size: 0.85em;
+  }
+
+  .table-title {
+    font-size: 1.4em;
+  }
+
+  .p-button-primary {
+    padding: 6px 12px;
+    font-size: 0.85em;
+  }
+
+  button {
+    padding: 6px 12px;
+    font-size: 0.85em;
+  }
+}
+
+@media (max-width: 480px) {
+  .calculet-container {
+    padding: 10px;
+  }
+
+  th, td {
+    font-size: 0.75em;
+  }
+
+  .table-title {
+    font-size: 1.2em;
+  }
+
+  input {
+    padding: 6px;
+  }
+
+  .p-button-primary {
+    padding: 5px 10px;
+    font-size: 0.8em;
+  }
+
+  button {
+    padding: 5px 10px;
+    font-size: 0.8em;
+  }
+
+  /* Centering the button */
+  .button-container {
+    display: flex;
+    justify-content: center;  /* Center horizontally */
+    margin-top: 30px;         /* Adds space above the button */
+  }
+
+ 
+  
+}
