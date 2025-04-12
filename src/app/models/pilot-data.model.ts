@@ -7,8 +7,8 @@ export interface PilotData {
     kmBloques: number;
     kmEnCours: number;
     raf: number;
-    depassement: number;
+    depassementPL: number;
     staffingPlanning: number;
-    objectifsCommun: number;
+    objectifsCommunPL: number;
   }
   

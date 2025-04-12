@@ -12,12 +12,29 @@ export class CalculetTableComponent implements OnInit {
   producersData: ProducerData[] = [];
   pilotsData: PilotData[] = [];
   currentUser: AppUser | null = null; // Current logged-in user
+  AppUser: any;
+  producers: AppUser[] = [];
+
+groupedProducers: { [prestation: string]: AppUser[] } = {};
+
 
   constructor(private userService: UserService,private router: Router) {}
 
   ngOnInit() {
     // Initially, we load users with their associated data
     this.loadUsersWithData();
+    this.producers = this.users.filter(user => user.role === 'PRODUCER');
+
+// Group producers by prestation using frontend logic
+const nro = this.producers.filter(p => p.id! >= 1 && p.id! <= 10);
+const desat = this.producers.filter(p => p.id! >= 11 && p.id! <= 20);
+const audit = this.producers.filter(p => p.id! > 20);
+
+this.groupedProducers = {
+  NROPM: nro,
+  DESAT: desat,
+  AUDIT: audit
+};
   }
 
   // Load users with their associated data (Producer and Pilot Data)
@@ -37,7 +54,7 @@ export class CalculetTableComponent implements OnInit {
   saveProducerData(user: AppUser) {
     if (user.producerData) {
       this.userService.addProducerData(user.id!, user.producerData).subscribe({
-        next: () => console.log('Producer data saved successfully'),
+        next: () => alert('Producer data saved successfully'),
         error: (err) => console.error('Error saving producer data', err),
       });
     }
@@ -47,7 +64,7 @@ export class CalculetTableComponent implements OnInit {
   savePilotData(user: AppUser) {
     if (user.pilotData) {
       this.userService.addPilotData(user.id!, user.pilotData).subscribe({
-        next: () => console.log('Pilot data saved successfully'),
+        next: () => alert('Pilot data saved successfully'),
         error: (err) => console.error('Error saving pilot data', err),
       });
     }
@@ -64,4 +81,9 @@ export class CalculetTableComponent implements OnInit {
   navigateToUserStats() {
     this.router.navigate(['/userstats']);
   }
+  goToProducerStats(producerId: number) {
+    this.router.navigate(['/producer', producerId, 'stats']);
+  }
+  
+  
 }

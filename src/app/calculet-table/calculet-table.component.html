@@ -19,7 +19,9 @@
       <tbody>
         <ng-container *ngFor="let user of users">
           <tr *ngIf="user.role === 'PRODUCER' && user.producerData">
-            <td>{{ user.fullName }}</td>
+            <td (click)="goToProducerStats(user.id!)" class="clickable-name">
+              {{ user.fullName }}
+            </td>
             <td><input [(ngModel)]="user.producerData.unitesTraites" /></td>
             <td><input [(ngModel)]="user.producerData.unitesBloques" /></td>
             <td><input [(ngModel)]="user.producerData.unitesEnCours" /></td>
@@ -28,13 +30,14 @@
             <td><input [(ngModel)]="user.producerData.staffingPlanning" /></td>
             <td><input [(ngModel)]="user.producerData.objectifsIndiv" /></td>
             <td>
-              <button class="normal-btn"  (click)="saveProducerData(user)">Save</button>
+              <button class="normal-btn" (click)="saveProducerData(user)">Save</button>
             </td>
           </tr>
         </ng-container>
       </tbody>
     </table>
   </div>
+
 
   <!-- 🔹 Pilots Table -->
   <h3>Pilots Table</h3>
@@ -47,8 +50,8 @@
           <th>Quantité Cible</th>
           <th>Prévisionnel Orange</th>
           <th>Production KM</th>
-          <th>KM Bloqués</th>
-          <th>KM En Cours</th>
+          <th>Unitées Bloqués</th>
+          <th>Unitées En Cours</th>
           <th>RAF</th>
           <th>Dépassement</th>
           <th>Staffing</th>
@@ -67,9 +70,9 @@
             <td><input [(ngModel)]="user.pilotData.kmBloques" /></td>
             <td><input [(ngModel)]="user.pilotData.kmEnCours" /></td>
             <td><input [(ngModel)]="user.pilotData.raf" /></td>
-            <td><input [(ngModel)]="user.pilotData.depassement" /></td>
+            <td><input [(ngModel)]="user.pilotData.depassementPL" /></td>
             <td><input [(ngModel)]="user.pilotData.staffingPlanning" /></td>
-            <td><input [(ngModel)]="user.pilotData.objectifsCommun" /></td>
+            <td><input [(ngModel)]="user.pilotData.objectifsCommunPL" /></td>
             <td>
               <button class="normal-btn"  (click)="savePilotData(user)">Save</button>
             </td>

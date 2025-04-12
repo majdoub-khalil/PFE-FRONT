@@ -1,0 +1,61 @@
+<div class="dashboard-background">
+    <div *ngIf="producer && producer.producerData" class="dashboard-container">
+      <div class="header">
+        <h2>KPIs for {{ producer.fullName }}</h2>
+      </div>
+  
+      <!-- Rating Section with Animation -->
+      <div class="rating-container">
+        <div class="rating-card" [@ratingChange]>
+          <h4>Productivity Rating</h4>
+          <div class="rating-number">
+            <span>{{ rating }} / 10</span>
+          </div>
+        </div>
+      </div>
+  
+      <!-- KPI Cards Section -->
+      <div class="kpi-cards">
+        <div class="kpi-card">
+          <h4>Unités Traitées</h4>
+          <p>{{ producer.producerData.unitesTraites }}</p>
+        </div>
+  
+        <div class="kpi-card">
+          <h4>Objectifs Individuels</h4>
+          <p>{{ producer.producerData.objectifsIndiv }}</p>
+        </div>
+      </div>
+  
+      <!-- Doughnut Chart Section -->
+      <h3>Répartition du Travail</h3>
+      <div class="chart-container">
+        <canvas baseChart
+          [data]="doughnutChartData"
+          [labels]="doughnutChartLabels"
+          [chartType]="doughnutChartType">
+        </canvas>
+      </div>
+  
+      <!-- Line Chart Section -->
+      <h3>Progression des Unites Traitées</h3>
+      <div class="chart-container">
+        <canvas baseChart
+          [data]="lineChartData"
+          [labels]="lineChartLabels"
+          [chartType]="lineChartType">
+        </canvas>
+      </div>
+  
+      <!-- Pie Chart Section -->
+      <h3>Comparaison des Unites Traitées vs Objectifs Individuels</h3>
+      <div class="chart-container">
+        <canvas baseChart
+          [data]="pieChartData"
+          [labels]="pieChartLabels"
+          [chartType]="pieChartType">
+        </canvas>
+      </div>
+    </div>
+  </div>
+  

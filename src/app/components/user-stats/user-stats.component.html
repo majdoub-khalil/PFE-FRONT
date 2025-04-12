@@ -1,4 +1,8 @@
-<div *ngIf="chartLabels.length">
+<!-- Chart Section -->
+<div class="charts-wrapper">
+  
+  <!-- First chart (pie) -->
+  <div *ngIf="chartLabels.length" class="chart-section">
     <h2>Producer Statistics</h2>
     <canvas baseChart
       [datasets]="[{ data: chartData, label: 'Total' }]"
@@ -7,4 +11,132 @@
       [chartType]="chartType">
     </canvas>
   </div>
-  
+
+  <!-- Second chart (doughnut burndown) -->
+  <div *ngIf="burndownData.length" class="chart-section">
+    <h2>Burndown Chart: Planned vs Actual Progress</h2>
+    <canvas baseChart
+      [datasets]="[{
+        data: burndownData,
+        label: 'Burndown Progress',
+        backgroundColor: ['#36A2EB', '#FF6384'],
+        borderWidth: 1
+      }]"
+      [labels]="burndownLabels"
+      [options]="chartOptions"
+      [chartType]="burndownType">
+    </canvas>
+  </div>
+
+  <!-- Third chart (real burndown progression) -->
+  <div *ngIf="realBurndownLabels.length" class="chart-section">
+    <h2>Progression vs Goal vs Ideal</h2>
+    <canvas baseChart
+      [datasets]="[ 
+        {
+          data: goalData,
+          label: 'Goal (Fixed)',
+          borderColor: '#FF6384',
+          fill: false,
+          borderDash: [5, 5],
+          lineTension: 0
+        },
+        {
+          data: progressionData,
+          label: 'Actual Progression',
+          borderColor: '#36A2EB',
+          fill: false,
+          lineTension: 0.3
+        },
+        {
+          data: idealData,
+          label: 'Ideal Progression',
+          borderColor: '#4CAF50',
+          fill: false,
+          borderDash: [2, 3],
+          lineTension: 0
+        }
+      ]"
+      [labels]="realBurndownLabels"
+      [options]="chartOptions"
+      [chartType]="progressionChartType">
+    </canvas>
+  </div>
+
+</div>
+
+<!-- Dashboard Insights Section -->
+<div class="dashboard-insights">
+  <h2>🎯 Dashboard Insights</h2>
+
+  <!-- Reusable Insight Card -->
+  <div class="insight-card" (click)="toggleDetail('topProducer')" [class.expanded]="isExpanded('topProducer')">
+    <div class="insight-header">
+      <span class="insight-title">🏆 Top Producer of the Month:</span>
+      <span class="insight-value">{{ dashboardInsights.topProducer }}</span>
+    </div>
+    <div class="insight-details" *ngIf="isExpanded('topProducer')">
+      <p>This producer completed the most units this month. Congrats!</p>
+    </div>
+  </div>
+
+  <div class="insight-card falling-behind" (click)="toggleDetail('fallingBehind')" [class.expanded]="isExpanded('fallingBehind')">
+    <div class="insight-header">
+      <span class="insight-title">🚨 Users Falling Behind:</span>
+      <span class="insight-value">{{ dashboardInsights.fallingBehindCount }}</span>
+    </div>
+    <div class="met-goals" *ngIf="isExpanded('fallingBehind')">
+      <p>Falling behind users:</p>
+      <ul>
+        <li *ngFor="let user of fallingBehind">{{ user.fullName }} - {{ user.producerData?.unitesTraites }} / {{ user.producerData?.objectifsIndiv }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="insight-card met-goals" (click)="toggleDetail('metGoals')" [class.expanded]="isExpanded('metGoals')">
+    <div class="insight-header">
+      <span class="insight-title">🟢 Users Who Met Their Goal:</span>
+      <span class="insight-value">{{ dashboardInsights.metGoalsCount }}</span>
+    </div>
+    <div class=".top-producer" *ngIf="isExpanded('metGoals')">
+      <p>Users who met or exceeded their goals:</p>
+      <ul>
+        <li *ngFor="let user of metGoals">{{ user.fullName }} - {{ user.producerData?.unitesTraites }} / {{ user.producerData?.objectifsIndiv }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-header">
+      <span class="insight-title">👥 Total Number of Producers:</span>
+      <span class="insight-value">{{ dashboardInsights.totalProducers }}</span>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-header">
+      <span class="insight-title">📈 Average Objective per Producer:</span>
+      <span class="insight-value">{{ dashboardInsights.averageObjective }}</span>
+    </div>
+  </div>
+
+  <div class="insight-card" (click)="toggleDetail('efficiency')" [class.expanded]="isExpanded('efficiency')">
+    <div class="insight-header">
+      <span class="insight-title">⚙️ Avg Efficiency Rate:</span>
+      <span class="insight-value">{{ averageEfficiencyRate }}%</span>
+    </div>
+    <div class="insight-details" *ngIf="isExpanded('efficiency')">
+      <p>This metric is calculated from all producers' units treated vs planned objectives.</p>
+    </div>
+  </div>
+
+  <div class="insight-card" (click)="toggleDetail('blockage')" [class.expanded]="isExpanded('blockage')">
+    <div class="insight-header">
+      <span class="insight-title">🧱 Avg Blockage Ratio:</span>
+      <span class="insight-value">{{ averageBlockageRatio }}%</span>
+    </div>
+    <div class="insight-details" *ngIf="isExpanded('blockage')">
+      <p>This represents the average number of blocked units compared to total work expected.</p>
+    </div>
+  </div>
+</div>

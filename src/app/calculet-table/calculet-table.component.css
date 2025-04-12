@@ -177,6 +177,13 @@ table input {
     justify-content: center;  /* Center horizontally */
     margin-top: 30px;         /* Adds space above the button */
   }
+  /* In calculet-table.component.css */
+.clickable-name {
+  color: #3f51b5;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 
  
   

@@ -1,0 +1,64 @@
+.dashboard-container {
+  max-width: 1200px;
+  margin: auto;
+  font-family: 'Roboto', sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.rating-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.rating-card {
+  background-color: #4caf50;
+  color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  height: 150px;
+}
+
+.rating-number {
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.kpi-cards {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.kpi-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  text-align: center;
+}
+
+.kpi-card h4 {
+  margin-bottom: 10px;
+}
+
+.chart-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+canvas {
+  max-width: 500px;
+  max-height: 400px;
+}
+    

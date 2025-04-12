@@ -1,6 +1,120 @@
-.chart-wrapper {
-    width: 80%;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
+/* Chart Wrapper to hold the 3 charts */
+.charts-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 2rem;
+}
+
+/* Common chart section styling */
+.chart-section {
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Ensuring canvas takes full width in charts */
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Insights Section */
+.dashboard-insights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 40px;
+  background-color: #f4f7fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: 1.2rem; /* Increased font size for bigger dashboard */
+  margin: 0 2rem 2rem;
+}
+
+.dashboard-insights h2 {
+  grid-column: span 2;
+  text-align: center;
+  font-size: 2.5rem;  /* Made title larger */
+  color: #2e3a59;
+  margin-bottom: 30px; /* Added space between title and cards */
+}
+
+.insight-card {
+  background-color: #fff;
+  padding: 30px;  /* Increased padding for larger cards */
+  border-radius: 12px; /* Rounded corners for a smooth look */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  height: 160px;  /* Fixed height for uniform card size */
+}
+
+.insight-card:hover {
+  transform: translateY(-15px); /* More noticeable hover lift */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.insight-card.top-producer:hover {
+  background-color: #ffeb3b;  /* Yellow for Top Producer */
+}
+
+.insight-card.falling-behind:hover {
+  background-color: #f44336;  /* Red for Falling Behind */
+}
+
+.insight-card.met-goals:hover {
+  background-color: #4caf50;  /* Green for Met Goals */
+}
+
+.insight-card .insight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.insight-title {
+  font-size: 1.4rem;  /* Larger title */
+  color: #555;
+  font-weight: bold;
+}
+
+.insight-value {
+  font-size: 1.6rem;  /* Increased value size */
+  color: #2e3a59;
+  font-weight: 600;
+}
+
+.falling-behind {
+  color: #f52323;
+}
+
+.met-goals {
+  color: #58c5a1;
+}
+
+.top-producer {
+  color: #ff9800;  /* Orange for Top Producer title */
+}
+
+.insight-card .insight-value {
+  color: #1c82d7; /* Custom color for the values */
+}
+
+/* Expanded state styling for hover */
+.insight-card.expanded {
+  background-color: #f4f6f9;  /* Light background when expanded */
+}
+
+.insight-card.expanded .insight-header {
+  font-weight: bold;
+  color: #333;
+}
+
+.insight-card.expanded:hover {
+  transform: translateY(-10px); /* Slight hover effect when expanded */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}

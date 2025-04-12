@@ -8,6 +8,7 @@ import { UrgencyChartComponent } from './urgency-chart/urgency-chart.component';
 import { CalculetTableComponent } from './calculet-table/calculet-table.component';
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { UserStatsComponent } from './components/user-stats/user-stats.component';
+import { ProducerStatsComponent } from './producer-stats/producer-stats.component';
 
 
 
@@ -20,6 +21,8 @@ const routes: Routes = [
   {path: 'table', component:  CalculetTableComponent },
   {path: 'user', component: UserFormComponent} ,
   {path:'userstats', component: UserStatsComponent},
+  { path: 'producer/:id/stats', component: ProducerStatsComponent }
+
   
 
 ];

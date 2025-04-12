@@ -60,6 +60,19 @@ export class UserService {
   getProducerStats(): Observable<{ [key: string]: number }> {
     return this.http.get<{ [key: string]: number }>(`${this.baseUrl}/producers/stats`);
   }
+  getBurndownStats() {
+    return this.http.get<{ [key: string]: number }>('http://localhost:8080/burndown-stats');
+  }
+  getAdditionalStats(): Observable<{ completionRatio: number; staffingUtilization: number }> {
+    return this.http.get<{ completionRatio: number; staffingUtilization: number }>('http://localhost:8080/additional-stats');
+  }
+  getProducerInsights() {
+    return this.http.get<any>(`${this.baseUrl}/producerInsights`);
+  }
+  getUserById(id: number): Observable<AppUser> {
+    return this.http.get<AppUser>(`${this.baseUrl}/users/id/${id}`);
+  }
+  
   
   
 }

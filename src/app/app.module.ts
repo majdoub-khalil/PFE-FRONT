@@ -28,6 +28,7 @@ import { UserFormComponent } from './components/user-form/user-form.component';
 import { UserStatsComponent } from './components/user-stats/user-stats.component';
 // other imports
 import { ChartsModule } from 'ng2-charts';
+import { ProducerStatsComponent } from './producer-stats/producer-stats.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { ChartsModule } from 'ng2-charts';
     UrgencyChartComponent,
     CalculetTableComponent,
     UserFormComponent,
-    UserStatsComponent     
+    UserStatsComponent,
+    ProducerStatsComponent     
   ],
   imports: [
     BrowserModule,
