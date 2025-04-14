@@ -1,56 +1,72 @@
-import { Component, OnInit } from '@angular/core';
-import { AppUser, ProducerData, PilotData } from '../models/app-user.model'; // Make sure your import path is correct
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { AppUser } from '../models/app-user.model';
 import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-calculet-table',
   templateUrl: './calculet-table.component.html',
   styleUrls: ['./calculet-table.component.css']
 })
 export class CalculetTableComponent implements OnInit {
-  users: AppUser[] = []; // Users array to hold all users with their data
-  producersData: ProducerData[] = [];
-  pilotsData: PilotData[] = [];
-  currentUser: AppUser | null = null; // Current logged-in user
-  AppUser: any;
+  users: AppUser[] = [];
   producers: AppUser[] = [];
+  pilots: AppUser[] = [];
+  prestationId: number = 2; // Default to DESAT (prestationId can be changed)
+  filteredProducers: AppUser[] = [];
+  filteredPilots: AppUser[] = [];
 
-groupedProducers: { [prestation: string]: AppUser[] } = {};
-
-
-  constructor(private userService: UserService,private router: Router) {}
+  constructor(private userService: UserService, private router: Router, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    // Initially, we load users with their associated data
     this.loadUsersWithData();
-    this.producers = this.users.filter(user => user.role === 'PRODUCER');
-
-// Group producers by prestation using frontend logic
-const nro = this.producers.filter(p => p.id! >= 1 && p.id! <= 10);
-const desat = this.producers.filter(p => p.id! >= 11 && p.id! <= 20);
-const audit = this.producers.filter(p => p.id! > 20);
-
-this.groupedProducers = {
-  NROPM: nro,
-  DESAT: desat,
-  AUDIT: audit
-};
   }
 
-  // Load users with their associated data (Producer and Pilot Data)
   loadUsersWithData() {
     this.userService.getAllUsers().subscribe((users: AppUser[]) => {
       this.users = users;
-      // Optionally set current user (mocked or based on real authentication)
-      this.currentUser = users.find(user => user.id === 1) || null;
+      this.producers = users.filter(user => user.role === 'PRODUCER');
+      this.pilots = users.filter(user => user.role === 'PILOT');
 
-      // Extract data based on roles
-      this.producersData = this.users.filter(user => user.role === 'PRODUCER' && user.producerData).map(user => user.producerData!);
-      this.pilotsData = this.users.filter(user => user.role === 'PILOT' && user.pilotData).map(user => user.pilotData!);
+      // Log the users and their prestation data for debugging
+      console.log("Users with their prestation data:", this.users);
+      
+      this.filterByPrestation();
     });
   }
 
-  // Save Producer Data to backend
+  filterByPrestation() {
+    console.log('Filtering by prestationId:', this.prestationId);
+
+    // Log each user's prestation data for inspection
+    this.users.forEach(user => {
+      if (user.prestation) {
+        console.log(`User: ${user.fullName}, Prestation ID: ${user.prestation.id_prestation}`);
+      } else {
+        console.log(`User: ${user.fullName}, Prestation: None`);
+      }
+    });
+
+    // Filter the producers and pilots based on prestationId.
+    // Using Number(...) to ensure type consistency.
+    this.filteredProducers = this.producers.filter(
+      user => Number(user.prestation?.id_prestation) === this.prestationId
+    );
+    this.filteredPilots = this.pilots.filter(
+      user => Number(user.prestation?.id_prestation) === this.prestationId
+    );
+
+    console.log('Filtered Producers:', this.filteredProducers);
+    console.log('Filtered Pilots:', this.filteredPilots);
+
+    this.cdr.detectChanges();
+  }
+
+  onPrestationChange() {
+    console.log('Prestation changed:', this.prestationId);
+    this.filterByPrestation();
+  }
+
   saveProducerData(user: AppUser) {
     if (user.producerData) {
       this.userService.addProducerData(user.id!, user.producerData).subscribe({
@@ -60,7 +76,6 @@ this.groupedProducers = {
     }
   }
 
-  // Save Pilot Data to backend
   savePilotData(user: AppUser) {
     if (user.pilotData) {
       this.userService.addPilotData(user.id!, user.pilotData).subscribe({
@@ -70,7 +85,6 @@ this.groupedProducers = {
     }
   }
 
-  // For role-based rendering and table data manipulation
   isProducer(user: AppUser): boolean {
     return user.role === 'PRODUCER';
   }
@@ -78,12 +92,12 @@ this.groupedProducers = {
   isPilot(user: AppUser): boolean {
     return user.role === 'PILOT';
   }
+
   navigateToUserStats() {
     this.router.navigate(['/userstats']);
   }
+
   goToProducerStats(producerId: number) {
     this.router.navigate(['/producer', producerId, 'stats']);
   }
-  
-  
 }
