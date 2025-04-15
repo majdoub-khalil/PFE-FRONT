@@ -1,13 +1,17 @@
 <!-- Dropdown for selecting Prestation -->
 <div class="prestation-selection">
   <label for="prestation">Select Prestation:</label>
-  <!-- Use [ngValue] to assign a number value rather than a string -->
-  <select id="prestation" [(ngModel)]="prestationId" (change)="onPrestationChange()">
+  <select
+    id="prestation"
+    [ngModel]="prestationId"
+    (ngModelChange)="onPrestationChange($event)"
+  >
     <option [ngValue]="1">NROPM</option>
     <option [ngValue]="2">DESAT</option>
     <option [ngValue]="3">MISSING</option>
   </select>
 </div>
+
 
 <!-- 🔹 Producers Table -->
 <h3>Producers Table</h3>
@@ -16,9 +20,9 @@
     <thead>
       <tr>
         <th>Name</th>
-        <th>Unites Traitées</th>
-        <th>Unites Bloquées</th>
-        <th>Unites En Cours</th>
+        <th>{{ labelMap[prestationId]?.unitesTraites }}</th>
+        <th>{{ labelMap[prestationId]?.unitesBloques }}</th>
+        <th>{{ labelMap[prestationId]?.unitesEnCours }}</th>
         <th>Reste à Faire</th>
         <th>Dépassement</th>
         <th>Staffing</th>
@@ -58,9 +62,9 @@
         <th>Quantité Cumulée</th>
         <th>Quantité Cible</th>
         <th>Prévisionnel Orange</th>
-        <th>Production KM</th>
-        <th>Unitées Bloquées</th>
-        <th>Unitées En Cours</th>
+        <th>Production </th>
+        <th>{{ labelMap[prestationId]?.unitesBloques }}</th>
+        <th>{{ labelMap[prestationId]?.unitesEnCours }}</th>
         <th>RAF</th>
         <th>Dépassement</th>
         <th>Staffing</th>

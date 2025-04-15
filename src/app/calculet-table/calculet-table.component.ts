@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AppUser } from '../models/app-user.model';
 import { UserService } from '../services/user.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-calculet-table',
@@ -12,14 +12,30 @@ export class CalculetTableComponent implements OnInit {
   users: AppUser[] = [];
   producers: AppUser[] = [];
   pilots: AppUser[] = [];
-  prestationId: number = 2; // Default to DESAT (prestationId can be changed)
+  prestationId!: number; // Will be set from route
   filteredProducers: AppUser[] = [];
   filteredPilots: AppUser[] = [];
 
-  constructor(private userService: UserService, private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    this.loadUsersWithData();
+    // Read prestationId from route params
+    this.route.params.subscribe(params => {
+      const id = +params['prestationId'];
+      if (!isNaN(id)) {
+        this.prestationId = id;
+        this.loadUsersWithData();
+      } else {
+        console.warn('Invalid prestationId. Defaulting to 2 (DESAT)');
+        this.prestationId = 2;
+        this.loadUsersWithData();
+      }
+    });
   }
 
   loadUsersWithData() {
@@ -28,9 +44,7 @@ export class CalculetTableComponent implements OnInit {
       this.producers = users.filter(user => user.role === 'PRODUCER');
       this.pilots = users.filter(user => user.role === 'PILOT');
 
-      // Log the users and their prestation data for debugging
       console.log("Users with their prestation data:", this.users);
-      
       this.filterByPrestation();
     });
   }
@@ -38,7 +52,6 @@ export class CalculetTableComponent implements OnInit {
   filterByPrestation() {
     console.log('Filtering by prestationId:', this.prestationId);
 
-    // Log each user's prestation data for inspection
     this.users.forEach(user => {
       if (user.prestation) {
         console.log(`User: ${user.fullName}, Prestation ID: ${user.prestation.id_prestation}`);
@@ -47,8 +60,6 @@ export class CalculetTableComponent implements OnInit {
       }
     });
 
-    // Filter the producers and pilots based on prestationId.
-    // Using Number(...) to ensure type consistency.
     this.filteredProducers = this.producers.filter(
       user => Number(user.prestation?.id_prestation) === this.prestationId
     );
@@ -62,9 +73,10 @@ export class CalculetTableComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  onPrestationChange() {
-    console.log('Prestation changed:', this.prestationId);
-    this.filterByPrestation();
+  onPrestationChange(newPrestationId: number) {
+    // Navigate to the route with the new prestationId
+    console.log('Prestation changed:', newPrestationId);
+    this.router.navigate(['/calculet', newPrestationId]);
   }
 
   saveProducerData(user: AppUser) {
@@ -94,10 +106,30 @@ export class CalculetTableComponent implements OnInit {
   }
 
   navigateToUserStats() {
-    this.router.navigate(['/userstats']);
+    this.router.navigate(['/userstats', this.prestationId]);
   }
 
   goToProducerStats(producerId: number) {
     this.router.navigate(['/producer', producerId, 'stats']);
   }
+
+
+  labelMap: any = {
+    1: { // NROPM
+      unitesTraites: 'Dossiers Traités',
+      unitesBloques: 'Dossiers Bloqués',
+      unitesEnCours: 'Dossiers En Cours',
+
+    },
+    2: { // DESAT
+      unitesTraites: 'Unitées Traitées',
+      unitesBloques: 'Unitées Bloquées',
+      unitesEnCours: 'Unitées En Cours'
+    },
+    3: { // MISSING
+      unitesTraites: 'KM Traités',
+      unitesBloques: 'KM Bloqués',
+      unitesEnCours: 'KM En Cours'
+    }
+  };
 }

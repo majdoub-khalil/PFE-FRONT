@@ -57,18 +57,30 @@ export class UserService {
   updatePilotData(pilotId: number, data: PilotData): Observable<PilotData> {
     return this.http.put<PilotData>(`${this.baseUrl}/pilots/${pilotId}`, data);
   }
-  getProducerStats(): Observable<{ [key: string]: number }> {
-    return this.http.get<{ [key: string]: number }>(`${this.baseUrl}/producers/stats`);
+  getProducerStats(prestationId: number): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(
+      `${this.baseUrl}/producers/stats/${prestationId}`
+    );
   }
-  getBurndownStats() {
-    return this.http.get<{ [key: string]: number }>('http://localhost:8080/burndown-stats');
+  
+  getBurndownStats(prestationId: number): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(
+      `http://localhost:8080/burndown-stats/${prestationId}`
+    );
   }
-  getAdditionalStats(): Observable<{ completionRatio: number; staffingUtilization: number }> {
-    return this.http.get<{ completionRatio: number; staffingUtilization: number }>('http://localhost:8080/additional-stats');
+  
+  getAdditionalStats(prestationId: number): Observable<{ completionRatio: number; staffingUtilization: number }> {
+    return this.http.get<{ completionRatio: number; staffingUtilization: number }>(
+      `http://localhost:8080/additional-stats/${prestationId}`
+    );
   }
-  getProducerInsights() {
-    return this.http.get<any>(`${this.baseUrl}/producerInsights`);
+  
+  getProducerInsights(prestationId: number): Observable<{ averageEfficiencyRate: number; averageBlockageRatio: number }> {
+    return this.http.get<{ averageEfficiencyRate: number; averageBlockageRatio: number }>(
+      `http://localhost:8080/producerInsights/${prestationId}`
+    );
   }
+  
   getUserById(id: number): Observable<AppUser> {
     return this.http.get<AppUser>(`${this.baseUrl}/users/id/${id}`);
   }

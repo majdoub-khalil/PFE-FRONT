@@ -21,7 +21,10 @@ const routes: Routes = [
   {path: 'table', component:  CalculetTableComponent },
   {path: 'user', component: UserFormComponent} ,
   {path:'userstats', component: UserStatsComponent},
-  { path: 'producer/:id/stats', component: ProducerStatsComponent }
+  { path: 'producer/:id/stats', component: ProducerStatsComponent },
+  {path: 'userstats/:prestationId',component: UserStatsComponent},
+  { path: 'calculet/:prestationId', component: CalculetTableComponent },
+
 
   
 
