@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AppUser } from '../models/app-user.model';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ActeTraitement } from '../models/ActeTraitement ';
 
 @Component({
   selector: 'app-calculet-table',
@@ -12,73 +13,142 @@ export class CalculetTableComponent implements OnInit {
   users: AppUser[] = [];
   producers: AppUser[] = [];
   pilots: AppUser[] = [];
-  prestationId!: number; // Will be set from route
+  prestationId!: number;
+  acteTraitements: ActeTraitement[] = [];
   filteredProducers: AppUser[] = [];
   filteredPilots: AppUser[] = [];
 
+  selectedMonth: number = new Date().getMonth() + 1;
+  selectedYear: number = new Date().getFullYear();
+  months = [
+    { name: 'Jan', value: 1 }, { name: 'Feb', value: 2 }, { name: 'Mar', value: 3 },
+    { name: 'Apr', value: 4 }, { name: 'May', value: 5 }, { name: 'Jun', value: 6 },
+    { name: 'Jul', value: 7 }, { name: 'Aug', value: 8 }, { name: 'Sep', value: 9 },
+    { name: 'Oct', value: 10 }, { name: 'Nov', value: 11 }, { name: 'Dec', value: 12 }
+  ];
+  years: number[] = [];
+
   constructor(
     private userService: UserService,
+    
     private router: Router,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    // Read prestationId from route params
     this.route.params.subscribe(params => {
       const id = +params['prestationId'];
-      if (!isNaN(id)) {
-        this.prestationId = id;
-        this.loadUsersWithData();
-      } else {
-        console.warn('Invalid prestationId. Defaulting to 2 (DESAT)');
-        this.prestationId = 2;
-        this.loadUsersWithData();
-      }
+      this.prestationId = !isNaN(id) ? id : 2;
+      this.initYears();
+      this.loadData();
     });
   }
 
-  loadUsersWithData() {
+  initYears() {
+    const currentYear = new Date().getFullYear();
+    this.years = Array.from({ length: 10 }, (_, i) => currentYear - i);
+  }
+
+  loadData() {
     this.userService.getAllUsers().subscribe((users: AppUser[]) => {
       this.users = users;
       this.producers = users.filter(user => user.role === 'PRODUCER');
       this.pilots = users.filter(user => user.role === 'PILOT');
 
-      console.log("Users with their prestation data:", this.users);
+      this.userService.getAllActes().subscribe((actes: ActeTraitement[]) => {
+        this.acteTraitements = actes;
+        this.filterByPrestation();
+        
+      });
+    });
+  }
+
+  onDateChange() {
+    console.log(`📅 Date changed to: ${this.selectedMonth}/${this.selectedYear}`);
+    
+    // Log the actual types
+    console.log('Types:', {
+      selectedMonthType: typeof this.selectedMonth,
+      selectedYearType: typeof this.selectedYear,
+      selectedMonthValue: this.selectedMonth,
+      selectedYearValue: this.selectedYear
+    });
+    
+    // Force conversion to numbers before filtering
+    this.selectedMonth = Number(this.selectedMonth);
+    this.selectedYear = Number(this.selectedYear);
+    
+    this.userService.getAllActes().subscribe((actes: ActeTraitement[]) => {
+      console.log(`📥 Actes fetched after date change: ${actes.length}`);
+      this.acteTraitements = actes;
       this.filterByPrestation();
     });
   }
-
-  filterByPrestation() {
-    console.log('Filtering by prestationId:', this.prestationId);
-
-    this.users.forEach(user => {
-      if (user.prestation) {
-        console.log(`User: ${user.fullName}, Prestation ID: ${user.prestation.id_prestation}`);
-      } else {
-        console.log(`User: ${user.fullName}, Prestation: None`);
-      }
-    });
-
-    this.filteredProducers = this.producers.filter(
-      user => Number(user.prestation?.id_prestation) === this.prestationId
-    );
-    this.filteredPilots = this.pilots.filter(
-      user => Number(user.prestation?.id_prestation) === this.prestationId
-    );
-
-    console.log('Filtered Producers:', this.filteredProducers);
-    console.log('Filtered Pilots:', this.filteredPilots);
-
-    this.cdr.detectChanges();
-  }
-
   onPrestationChange(newPrestationId: number) {
-    // Navigate to the route with the new prestationId
-    console.log('Prestation changed:', newPrestationId);
+    this.loadData(); 
     this.router.navigate(['/calculet', newPrestationId]);
   }
-
+  filterByPrestation(): void {
+    console.log('🔍 Filtering for Prestation ID:', this.prestationId);
+    console.log('📆 Filtering for Date:', this.selectedMonth, '/', this.selectedYear);
+    console.log('👥 Total users known:', this.users.length);
+    console.log('📚 Total actes loaded:', this.acteTraitements.length);
+  
+    // Reset filtered arrays
+    this.filteredProducers = [];
+    this.filteredPilots = [];
+  
+    // ✅ Filter producers with date + prestation
+    this.filteredProducers = this.users.filter(user => {
+      if (!this.isProducer(user) || !user.producerData) return false;
+  
+      if (user.prestation?.id_prestation !== this.prestationId) {
+        console.log(`— skip user ${user.id}: wrong prestation`);
+        return false;
+      }
+  
+      const userActes = this.acteTraitements.filter(
+        a => a.affectation === user.id?.toString()
+      );
+      console.log(`— user ${user.id} has ${userActes.length} total actes`);
+  
+      const hasMatchingActe = userActes.some(acte => {
+        if (!acte.date_validation) return false;
+  
+        const acteDate = new Date(acte.date_validation);
+        const acteYear = acteDate.getFullYear();
+        const acteMonth = acteDate.getMonth() + 1;
+  
+        const match =
+          acteYear === this.selectedYear &&
+          acteMonth === this.selectedMonth;
+  
+        console.log(`   • acte ${acte.idacte} → ${acte.date_validation} date=${acteDate.toISOString()} year=${acteYear} month=${acteMonth} match? ${match}`);
+        return match;
+      });
+  
+      return hasMatchingActe;
+    });
+  
+    // ✅ Filter pilots by prestation only — no date filter
+    this.filteredPilots = this.users.filter(user => {
+      return (
+        this.isPilot(user) &&
+        user.pilotData &&
+        user.prestation?.id_prestation === this.prestationId
+      );
+    });
+  
+    console.log(`✅ Producers matching date & prestation: ${this.filteredProducers.length}`);
+    console.log('🧪 Final filteredProducers list:', this.filteredProducers.map(u => u.id));
+    console.log(`✅ Pilots matching prestation only: ${this.filteredPilots.length}`);
+    console.log('🧪 Final filteredPilots list:', this.filteredPilots.map(u => u.id));
+  
+    this.cdr.detectChanges();
+  }
+  
+  
   saveProducerData(user: AppUser) {
     if (user.producerData) {
       this.userService.addProducerData(user.id!, user.producerData).subscribe({
@@ -113,23 +183,9 @@ export class CalculetTableComponent implements OnInit {
     this.router.navigate(['/producer', producerId, 'stats']);
   }
 
-
   labelMap: any = {
-    1: { // NROPM
-      unitesTraites: 'Dossiers Traités',
-      unitesBloques: 'Dossiers Bloqués',
-      unitesEnCours: 'Dossiers En Cours',
-
-    },
-    2: { // DESAT
-      unitesTraites: 'Unitées Traitées',
-      unitesBloques: 'Unitées Bloquées',
-      unitesEnCours: 'Unitées En Cours'
-    },
-    3: { // MISSING
-      unitesTraites: 'KM Traités',
-      unitesBloques: 'KM Bloqués',
-      unitesEnCours: 'KM En Cours'
-    }
+    1: { unitesTraites: 'Dossiers Traités', unitesBloques: 'Dossiers Bloqués', unitesEnCours: 'Dossiers En Cours' },
+    2: { unitesTraites: 'Unitées Traitées', unitesBloques: 'Unitées Bloquées', unitesEnCours: 'Unitées En Cours' },
+    3: { unitesTraites: 'KM Traités', unitesBloques: 'KM Bloqués', unitesEnCours: 'KM En Cours' }
   };
 }

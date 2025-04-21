@@ -1,17 +1,30 @@
-<!-- Dropdown for selecting Prestation -->
-<div class="prestation-selection">
-  <label for="prestation">Select Prestation:</label>
-  <select
-    id="prestation"
-    [ngModel]="prestationId"
-    (ngModelChange)="onPrestationChange($event)"
-  >
-    <option [ngValue]="1">NROPM</option>
-    <option [ngValue]="2">DESAT</option>
-    <option [ngValue]="3">MISSING</option>
-  </select>
-</div>
+<!-- 🔽 Prestation & Date Selection -->
+<div class="controls">
+  <div class="prestation-selection">
+    <label for="prestation">Select Prestation:</label>
+    <select
+      id="prestation"
+      [ngModel]="prestationId"
+      (ngModelChange)="onPrestationChange($event)"
+    >
+      <option [ngValue]="1">NROPM</option>
+      <option [ngValue]="2">DESAT</option>
+      <option [ngValue]="3">MISSING</option>
+    </select>
+  </div>
 
+  <div class="date-selection">
+    <label for="month">Month:</label>
+    <select id="month" [(ngModel)]="selectedMonth" (change)="onDateChange()">
+      <option *ngFor="let m of months" [value]="m.value">{{ m.name }}</option>
+    </select>
+
+    <label for="year">Year:</label>
+    <select id="year" [(ngModel)]="selectedYear" (change)="onDateChange()">
+      <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+    </select>
+  </div>
+</div>
 
 <!-- 🔹 Producers Table -->
 <h3>Producers Table</h3>
@@ -31,23 +44,25 @@
       </tr>
     </thead>
     <tbody>
-      <ng-container *ngFor="let user of filteredProducers">
-        <tr *ngIf="isProducer(user) && user.producerData">
-          <td (click)="goToProducerStats(user.id!)" class="clickable-name">
-            {{ user.fullName }}
-          </td>
-          <td><input [(ngModel)]="user.producerData.unitesTraites" /></td>
-          <td><input [(ngModel)]="user.producerData.unitesBloques" /></td>
-          <td><input [(ngModel)]="user.producerData.unitesEnCours" /></td>
-          <td><input [(ngModel)]="user.producerData.resteAFaire" /></td>
-          <td><input [(ngModel)]="user.producerData.depassement" /></td>
-          <td><input [(ngModel)]="user.producerData.staffingPlanning" /></td>
-          <td><input [(ngModel)]="user.producerData.objectifsIndiv" /></td>
-          <td>
-            <button class="normal-btn" (click)="saveProducerData(user)">Save</button>
-          </td>
-        </tr>
-      </ng-container>
+      <tr
+        *ngFor="let user of filteredProducers"
+        (click)="goToProducerStats(user.id!)"
+        class="clickable-name"
+      >
+        <td>{{ user.fullName }}</td>
+        <td><input [(ngModel)]="user.producerData!.unitesTraites"/></td>
+        <td><input [(ngModel)]="user.producerData!.unitesBloques"/></td>
+        <td><input [(ngModel)]="user.producerData!.unitesEnCours"/></td>
+        <td><input [(ngModel)]="user.producerData!.resteAFaire"/></td>
+        <td><input [(ngModel)]="user.producerData!.depassement"/></td>
+        <td><input [(ngModel)]="user.producerData!.staffingPlanning"/></td>
+        <td><input [(ngModel)]="user.producerData!.objectifsIndiv"/></td>
+        <td>
+          <button class="normal-btn" (click)="saveProducerData(user); $event.stopPropagation()">
+            Save
+          </button>
+        </td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -62,7 +77,7 @@
         <th>Quantité Cumulée</th>
         <th>Quantité Cible</th>
         <th>Prévisionnel Orange</th>
-        <th>Production </th>
+        <th>Production</th>
         <th>{{ labelMap[prestationId]?.unitesBloques }}</th>
         <th>{{ labelMap[prestationId]?.unitesEnCours }}</th>
         <th>RAF</th>
@@ -95,12 +110,11 @@
   </table>
 </div>
 
-<!-- Centered Statistics Button -->
+<!-- Stats Button -->
 <div class="button-container">
   <button class="stats-btn" (click)="navigateToUserStats()">
     <i class="fas fa-chart-pie"></i> View Statistics
   </button>
 </div>
 
-<!-- FontAwesome Icon Support -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />

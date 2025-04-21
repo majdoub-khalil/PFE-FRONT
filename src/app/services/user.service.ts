@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { AppUser } from '../models/app-user.model';
 import { ProducerData } from '../models/producer-data.model';
 import { PilotData } from '../models/pilot-data.model';
+import { ActeTraitement } from '../models/ActeTraitement ';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -86,6 +88,15 @@ export class UserService {
   }
   getUsersByPrestation(prestationId: number): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/users/prestation/${prestationId}`);
+  }
+  //date
+  getValidatedActes(userId: number, month: number, year: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/actes/user/${userId}/actes/validated?month=${month}&year=${year}`);
+  }
+  getAllActes(): Observable<ActeTraitement[]> {
+    return this.http.get<ActeTraitement[]>(`${this.baseUrl}/actes`).pipe(
+      tap(data => console.log('Actes reçus:', data))
+    );
   }
   
   
