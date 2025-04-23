@@ -30,7 +30,6 @@ export class CalculetTableComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    
     private router: Router,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
@@ -59,7 +58,6 @@ export class CalculetTableComponent implements OnInit {
       this.userService.getAllActes().subscribe((actes: ActeTraitement[]) => {
         this.acteTraitements = actes;
         this.filterByPrestation();
-        
       });
     });
   }
@@ -85,10 +83,12 @@ export class CalculetTableComponent implements OnInit {
       this.filterByPrestation();
     });
   }
+  
   onPrestationChange(newPrestationId: number) {
     this.loadData(); 
     this.router.navigate(['/calculet', newPrestationId]);
   }
+  
   filterByPrestation(): void {
     console.log('🔍 Filtering for Prestation ID:', this.prestationId);
     console.log('📆 Filtering for Date:', this.selectedMonth, '/', this.selectedYear);
@@ -147,7 +147,6 @@ export class CalculetTableComponent implements OnInit {
   
     this.cdr.detectChanges();
   }
-  
   
   saveProducerData(user: AppUser) {
     if (user.producerData) {

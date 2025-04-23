@@ -26,9 +26,12 @@ import { CalendarModule } from 'primeng/calendar';
 import { InputTextModule } from 'primeng/inputtext';
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { UserStatsComponent } from './components/user-stats/user-stats.component';
+import { ProgressBarModule } from 'primeng/progressbar';
 // other imports
 import { ChartsModule } from 'ng2-charts';
 import { ProducerStatsComponent } from './producer-stats/producer-stats.component';
+import { MonthlySnapshotComponent } from './monthly-snapshot/monthly-snapshot.component';
+
 
 @NgModule({
   declarations: [
@@ -41,7 +44,9 @@ import { ProducerStatsComponent } from './producer-stats/producer-stats.componen
     CalculetTableComponent,
     UserFormComponent,
     UserStatsComponent,
-    ProducerStatsComponent     
+    ProducerStatsComponent,
+    MonthlySnapshotComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -58,6 +63,7 @@ import { ProducerStatsComponent } from './producer-stats/producer-stats.componen
     TableModule,
     DropdownModule,
     CalendarModule,
+    ProgressBarModule,
     InputTextModule
   ],
   providers: [],

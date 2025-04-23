@@ -1,0 +1,99 @@
+<div class="snapshot-container">
+  <!-- Page Title with Icon -->
+  <h2 class="page-title">
+    <span class="chart-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M4 19h4l3.5-5 2.5 3 3.5-7 2.5 9H20M4 3H18c1.1 0 2 .9 2 2v16l-4-4-6 2-6-6-4 4V5c0-1.1.9-2 2-2z"/>
+      </svg>
+    </span>
+    Monthly Snapshot
+  </h2>
+  
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filters-title">
+      <span class="filters-icon">🔍</span>
+      Filters
+    </div>
+    
+    <div class="filters-row">
+      <div class="filter-group">
+        <label class="filter-label" for="month">Month:</label>
+        <select class="filter-input" id="month" [(ngModel)]="selectedMonth" (change)="onFilterChange()">
+          <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label class="filter-label" for="year">Year:</label>
+        <input 
+          class="filter-input"
+          id="year" 
+          type="number" 
+          [(ngModel)]="selectedYear" 
+          (change)="onFilterChange()" 
+          placeholder="Enter Year"
+        />
+      </div>
+      
+      <div class="filter-group">
+        <label class="filter-label" for="prestation">Prestation:</label>
+        <select class="filter-input" id="prestation" [(ngModel)]="selectedPrestationId" (change)="onFilterChange()">
+          <option *ngFor="let prest of prestations" [value]="prest.value">{{ prest.label }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading Indicator -->
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+  
+  <!-- Data Table -->
+  <table class="data-table" *ngIf="!loading && statsWithNames.length > 0">
+    <thead>
+      <tr>
+        <th>PRODUCER ID</th>
+        <th>NAME</th>
+        <th>UNITÉS TRAITÉES</th>
+        <th>BLOQUÉES</th>
+        <th>EN COURS</th>
+        <th>RAF</th>
+        <th>DÉPASSEMENT</th>
+        <th>OBJECTIFS</th>
+        <th>STAFFING</th>
+        <th>PROGRESS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of statsWithNames">
+        <td>{{ s.producerId }}</td>
+        <td>{{ s.fullName }}</td>
+        <td class="numeric">{{ s.unitesTraites }}</td>
+        <td class="numeric">{{ s.unitesBloques }}</td>
+        <td class="numeric">{{ s.unitesEnCours }}</td>
+        <td class="numeric">{{ s.resteAFaire }}</td>
+        <td class="numeric">{{ s.depassement }}</td>
+        <td class="numeric">{{ s.objectifsIndiv }}</td>
+        <td class="numeric">{{ s.staffingPlanning }}</td>
+        <td>
+          <div class="progress-outer">
+            <div class="progress-inner" 
+                 [ngClass]="getProgressClass(s.percentComplete)"
+                 [style.width.%]="s.percentComplete">
+            </div>
+          </div>
+          <div class="progress-text">
+            {{ s.percentComplete | number:'1.0-0' }}%
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <!-- No Data Message -->
+  <div class="no-data" *ngIf="!loading && statsWithNames.length === 0">
+    No data found for the selected filters
+  </div>
+</div>

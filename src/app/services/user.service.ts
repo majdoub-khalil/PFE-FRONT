@@ -6,6 +6,7 @@ import { ProducerData } from '../models/producer-data.model';
 import { PilotData } from '../models/pilot-data.model';
 import { ActeTraitement } from '../models/ActeTraitement ';
 import { tap } from 'rxjs/operators';
+import { MonthlyProducerStats } from '../models/MonthlyProducerStats';
 
 @Injectable({
   providedIn: 'root'
@@ -98,6 +99,10 @@ export class UserService {
       tap(data => console.log('Actes reçus:', data))
     );
   }
+  getMonthlyStats(month: number, year: number): Observable<MonthlyProducerStats[]> {
+    return this.http.get<MonthlyProducerStats[]>(`${this.baseUrl}/api/stats/monthly-stats?month=${month}&year=${year}`);
+  }
+  
   
   
   

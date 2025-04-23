@@ -1,120 +1,164 @@
-<!-- 🔽 Prestation & Date Selection -->
-<div class="controls">
-  <div class="prestation-selection">
-    <label for="prestation">Select Prestation:</label>
-    <select
-      id="prestation"
-      [ngModel]="prestationId"
-      (ngModelChange)="onPrestationChange($event)"
-    >
-      <option [ngValue]="1">NROPM</option>
-      <option [ngValue]="2">DESAT</option>
-      <option [ngValue]="3">MISSING</option>
-    </select>
+<div class="calculet-container">
+  <!-- Header with Icon -->
+  <div class="calculet-header">
+    <div class="header-icon">
+      <i class="fas fa-calculator"></i>
+    </div>
+    <h2 class="page-title">Data Management Console</h2>
   </div>
 
-  <div class="date-selection">
-    <label for="month">Month:</label>
-    <select id="month" [(ngModel)]="selectedMonth" (change)="onDateChange()">
-      <option *ngFor="let m of months" [value]="m.value">{{ m.name }}</option>
-    </select>
+  <!-- 🔽 Prestation & Date Selection -->
+  <div class="controls">
+    <div class="control-card prestation-selection">
+      <div class="control-header">
+        <i class="fas fa-project-diagram"></i>
+        <span>Prestation</span>
+      </div>
+      <div class="control-content">
+        <select
+          id="prestation"
+          class="styled-select"
+          [ngModel]="prestationId"
+          (ngModelChange)="onPrestationChange($event)"
+        >
+          <option [ngValue]="1">NROPM</option>
+          <option [ngValue]="2">DESAT</option>
+          <option [ngValue]="3">MISSING</option>
+        </select>
+      </div>
+    </div>
 
-    <label for="year">Year:</label>
-    <select id="year" [(ngModel)]="selectedYear" (change)="onDateChange()">
-      <option *ngFor="let y of years" [value]="y">{{ y }}</option>
-    </select>
+    <div class="control-card date-selection">
+      <div class="control-header">
+        <i class="fas fa-calendar-alt"></i>
+        <span>Date</span>
+      </div>
+      <div class="control-content">
+        <div class="date-inputs">
+          <div class="date-field">
+            <label for="month">Month:</label>
+            <select id="month" class="styled-select" [(ngModel)]="selectedMonth" (change)="onDateChange()">
+              <option *ngFor="let m of months" [value]="m.value">{{ m.name }}</option>
+            </select>
+          </div>
+
+          <div class="date-field">
+            <label for="year">Year:</label>
+            <select id="year" class="styled-select" [(ngModel)]="selectedYear" (change)="onDateChange()">
+              <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- 🔹 Producers Table -->
-<h3>Producers Table</h3>
-<div class="table-wrapper">
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>{{ labelMap[prestationId]?.unitesTraites }}</th>
-        <th>{{ labelMap[prestationId]?.unitesBloques }}</th>
-        <th>{{ labelMap[prestationId]?.unitesEnCours }}</th>
-        <th>Reste à Faire</th>
-        <th>Dépassement</th>
-        <th>Staffing</th>
-        <th>Objectifs Individuels</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        *ngFor="let user of filteredProducers"
-        (click)="goToProducerStats(user.id!)"
-        class="clickable-name"
-      >
-        <td>{{ user.fullName }}</td>
-        <td><input [(ngModel)]="user.producerData!.unitesTraites"/></td>
-        <td><input [(ngModel)]="user.producerData!.unitesBloques"/></td>
-        <td><input [(ngModel)]="user.producerData!.unitesEnCours"/></td>
-        <td><input [(ngModel)]="user.producerData!.resteAFaire"/></td>
-        <td><input [(ngModel)]="user.producerData!.depassement"/></td>
-        <td><input [(ngModel)]="user.producerData!.staffingPlanning"/></td>
-        <td><input [(ngModel)]="user.producerData!.objectifsIndiv"/></td>
-        <td>
-          <button class="normal-btn" (click)="saveProducerData(user); $event.stopPropagation()">
-            Save
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+  <!-- 🔹 Producers Table -->
+  <div class="table-section producers-section">
+    <div class="section-header">
+      <i class="fas fa-users"></i>
+      <h3>Producers Data</h3>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table producers-table">
+        <thead>
+          <tr>
+            <th class="name-column">Name</th>
+            <th>{{ labelMap[prestationId]?.unitesTraites }}</th>
+            <th>{{ labelMap[prestationId]?.unitesBloques }}</th>
+            <th>{{ labelMap[prestationId]?.unitesEnCours }}</th>
+            <th>Reste à Faire</th>
+            <th>Dépassement</th>
+            <th>Staffing</th>
+            <th>Objectifs</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredProducers" class="data-row">
+            <td class="name-cell clickable-name" (click)="goToProducerStats(user.id!)">
+              <i class="fas fa-user"></i> {{ user.fullName }}
+            </td> <!-- Name cell is now clickable -->
+            <td><input class="data-input" [(ngModel)]="user.producerData!.unitesTraites"/></td>
+            <td><input class="data-input" [(ngModel)]="user.producerData!.unitesBloques"/></td>
+            <td><input class="data-input" [(ngModel)]="user.producerData!.unitesEnCours"/></td>
+            <td><input class="data-input" [(ngModel)]="user.producerData!.resteAFaire"/></td>
+            <td><input class="data-input" [(ngModel)]="user.producerData!.depassement"/></td>
+            <td><input class="data-input" [(ngModel)]="user.producerData!.staffingPlanning"/></td>
+            <td><input class="data-input" [(ngModel)]="user.producerData!.objectifsIndiv"/></td>
+            <td>
+              <button class="save-btn" (click)="saveProducerData(user); $event.stopPropagation()">
+                <i class="fas fa-save"></i> Save
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredProducers.length === 0" class="no-data-row">
+            <td colspan="9">No producers found matching the selected criteria</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-<!-- 🔹 Pilots Table -->
-<h3>Pilots Table</h3>
-<div class="table-wrapper">
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Quantité Cumulée</th>
-        <th>Quantité Cible</th>
-        <th>Prévisionnel Orange</th>
-        <th>Production</th>
-        <th>{{ labelMap[prestationId]?.unitesBloques }}</th>
-        <th>{{ labelMap[prestationId]?.unitesEnCours }}</th>
-        <th>RAF</th>
-        <th>Dépassement</th>
-        <th>Staffing</th>
-        <th>Objectifs Communs</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <ng-container *ngFor="let user of filteredPilots">
-        <tr *ngIf="isPilot(user) && user.pilotData">
-          <td>{{ user.fullName }}</td>
-          <td><input [(ngModel)]="user.pilotData.quantiteCumulee" /></td>
-          <td><input [(ngModel)]="user.pilotData.quantiteCible" /></td>
-          <td><input [(ngModel)]="user.pilotData.previsionnelOrange" /></td>
-          <td><input [(ngModel)]="user.pilotData.productionKm" /></td>
-          <td><input [(ngModel)]="user.pilotData.kmBloques" /></td>
-          <td><input [(ngModel)]="user.pilotData.kmEnCours" /></td>
-          <td><input [(ngModel)]="user.pilotData.raf" /></td>
-          <td><input [(ngModel)]="user.pilotData.depassementPL" /></td>
-          <td><input [(ngModel)]="user.pilotData.staffingPlanning" /></td>
-          <td><input [(ngModel)]="user.pilotData.objectifsCommunPL" /></td>
-          <td>
-            <button class="normal-btn" (click)="savePilotData(user)">Save</button>
-          </td>
-        </tr>
-      </ng-container>
-    </tbody>
-  </table>
-</div>
+  <!-- 🔹 Pilots Table -->
+  <div class="table-section pilots-section">
+    <div class="section-header">
+      <i class="fas fa-user-tie"></i>
+      <h3>Pilots Data</h3>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table pilots-table">
+        <thead>
+          <tr>
+            <th class="name-column">Name</th>
+            <th>Quantité Cumulée</th>
+            <th>Quantité Cible</th>
+            <th>Prévisionnel Orange</th>
+            <th>Production</th>
+            <th>{{ labelMap[prestationId]?.unitesBloques }}</th>
+            <th>{{ labelMap[prestationId]?.unitesEnCours }}</th>
+            <th>RAF</th>
+            <th>Dépassement</th>
+            <th>Staffing</th>
+            <th>Objectifs Communs</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let user of filteredPilots">
+            <tr *ngIf="isPilot(user) && user.pilotData" class="data-row">
+              <td class="name-cell"><i class="fas fa-user-tie"></i> {{ user.fullName }}</td>
+              <td><input class="data-input" [(ngModel)]="user.pilotData.quantiteCumulee" /></td>
+              <td><input class="data-input" [(ngModel)]="user.pilotData.quantiteCible" /></td>
+              <td><input class="data-input" [(ngModel)]="user.pilotData.previsionnelOrange" /></td>
+              <td><input class="data-input" [(ngModel)]="user.pilotData.productionKm" /></td>
+              <td><input class="data-input" [(ngModel)]="user.pilotData.kmBloques" /></td>
+              <td><input class="data-input" [(ngModel)]="user.pilotData.kmEnCours" /></td>
+              <td><input class="data-input" [(ngModel)]="user.pilotData.raf" /></td>
+              <td><input class="data-input" [(ngModel)]="user.pilotData.depassementPL" /></td>
+              <td><input class="data-input" [(ngModel)]="user.pilotData.staffingPlanning" /></td>
+              <td><input class="data-input" [(ngModel)]="user.pilotData.objectifsCommunPL" /></td>
+              <td>
+                <button class="save-btn" (click)="savePilotData(user)">
+                  <i class="fas fa-save"></i> Save
+                </button>
+              </td>
+            </tr>
+          </ng-container>
+          <tr *ngIf="filteredPilots.length === 0" class="no-data-row">
+            <td colspan="12">No pilots found matching the selected criteria</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-<!-- Stats Button -->
-<div class="button-container">
-  <button class="stats-btn" (click)="navigateToUserStats()">
-    <i class="fas fa-chart-pie"></i> View Statistics
-  </button>
+  <!-- Stats Button -->
+  <div class="button-container">
+    <button class="stats-btn" (click)="navigateToUserStats()">
+      <i class="fas fa-chart-pie"></i> View Statistics
+    </button>
+  </div>
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
