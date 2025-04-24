@@ -7,6 +7,7 @@ import { PilotData } from '../models/pilot-data.model';
 import { ActeTraitement } from '../models/ActeTraitement ';
 import { tap } from 'rxjs/operators';
 import { MonthlyProducerStats } from '../models/MonthlyProducerStats';
+import { BurndownPoint } from '../models/BurndownPoint';
 
 @Injectable({
   providedIn: 'root'
@@ -102,8 +103,16 @@ export class UserService {
   getMonthlyStats(month: number, year: number): Observable<MonthlyProducerStats[]> {
     return this.http.get<MonthlyProducerStats[]>(`${this.baseUrl}/api/stats/monthly-stats?month=${month}&year=${year}`);
   }
-  
-  
+    //GLOBAL STATS
+  getBurndownData(year: number, month: number, prestationId: number): Observable<BurndownPoint[]> {
+    return this.http.get<BurndownPoint[]>(
+      `${this.baseUrl}/api/stats/burndown?year=${year}&month=${month}&prestationId=${prestationId}`
+    );
+  }
+   // 🔹 Get general monthly statistics
+   getGeneralMonthlyStatistics(year: number, month: number): Observable<Map<string, any>> {
+    return this.http.get<Map<string, any>>(`${this.baseUrl}/api/stats/general-stats?year=${year}&month=${month}`);
+  }
   
   
 }

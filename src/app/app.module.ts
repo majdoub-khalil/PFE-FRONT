@@ -31,6 +31,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ChartsModule } from 'ng2-charts';
 import { ProducerStatsComponent } from './producer-stats/producer-stats.component';
 import { MonthlySnapshotComponent } from './monthly-snapshot/monthly-snapshot.component';
+import { GlobalStatsComponent } from './global-stats/global-stats.component';
 
 
 @NgModule({
@@ -46,6 +47,7 @@ import { MonthlySnapshotComponent } from './monthly-snapshot/monthly-snapshot.co
     UserStatsComponent,
     ProducerStatsComponent,
     MonthlySnapshotComponent,
+    GlobalStatsComponent,
 
   ],
   imports: [

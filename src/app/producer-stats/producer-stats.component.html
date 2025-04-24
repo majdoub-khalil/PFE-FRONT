@@ -1,61 +1,123 @@
-<div class="dashboard-background">
-    <div *ngIf="producer && producer.producerData" class="dashboard-container">
-      <div class="header">
-        <h2>KPIs for {{ producer.fullName }}</h2>
-      </div>
-  
-      <!-- Rating Section with Animation -->
-      <div class="rating-container">
-        <div class="rating-card" [@ratingChange]>
-          <h4>Productivity Rating</h4>
-          <div class="rating-number">
-            <span>{{ rating }} / 10</span>
+<!-- producer-stats.component.html -->
+<div class="dashboard-wrapper">
+  <div class="loading-screen" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement des données...</p>
+  </div>
+
+  <div class="dashboard-container" *ngIf="!isLoading && producer && producer.producerData" [@fadeIn]>
+    <div class="dashboard-header">
+      <h1>{{ producer.fullName }} <span>Dashboard</span></h1>
+      <p class="subtitle">Performance statistiques et KPIs</p>
+    </div>
+
+    <div class="dashboard-content">
+      <!-- Top KPI Cards -->
+      <div class="kpi-overview">
+        <!-- Rating Card with Animation -->
+        <div class="kpi-card rating-card" [@ratingChange]="animationState" [style.background-color]="ratingColor">
+          <div class="card-content">
+            <h3>Performance</h3>
+            <div class="rating-circle">
+              <span class="rating-value">{{ rating }}</span>
+              <span class="rating-max">/10</span>
+            </div>
+            <p class="rating-label">Évaluation globale</p>
+          </div>
+        </div>
+
+        <!-- Other KPI Cards -->
+        <div class="kpi-card">
+          <div class="card-content">
+            <div class="kpi-icon">
+              <i class="material-icons">done_all</i>
+            </div>
+            <div class="kpi-info">
+              <h3>Unités Traitées</h3>
+              <p class="kpi-value">{{ producer.producerData.unitesTraites }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="card-content">
+            <div class="kpi-icon">
+              <i class="material-icons">flag</i>
+            </div>
+            <div class="kpi-info">
+              <h3>Objectifs</h3>
+              <p class="kpi-value">{{ producer.producerData.objectifsIndiv }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="card-content">
+            <div class="kpi-icon">
+              <i class="material-icons">block</i>
+            </div>
+            <div class="kpi-info">
+              <h3>Unités Bloquées</h3>
+              <p class="kpi-value">{{ producer.producerData.unitesBloques }}</p>
+            </div>
           </div>
         </div>
       </div>
-  
-      <!-- KPI Cards Section -->
-      <div class="kpi-cards">
-        <div class="kpi-card">
-          <h4>Unités Traitées</h4>
-          <p>{{ producer.producerData.unitesTraites }}</p>
+
+      <!-- Charts Section -->
+      <div class="charts-section">
+        <!-- Left charts column -->
+        <div class="chart-column">
+          <div class="chart-card">
+            <h3>Répartition du Travail</h3>
+            <div class="chart-container">
+              <canvas baseChart
+                [datasets]="[{data: doughnutChartData}]"
+                [labels]="doughnutChartLabels"
+                [chartType]="doughnutChartType"
+                [colors]="chartColors"
+                [options]="chartOptions">
+              </canvas>
+            </div>
+          </div>
         </div>
-  
-        <div class="kpi-card">
-          <h4>Objectifs Individuels</h4>
-          <p>{{ producer.producerData.objectifsIndiv }}</p>
+
+        <!-- Right charts column -->
+        <div class="chart-column">
+          <div class="chart-card">
+            <h3>Progression Hebdomadaire</h3>
+            <div class="chart-container">
+              <canvas baseChart
+                [datasets]="lineChartData"
+                [labels]="lineChartLabels"
+                [options]="lineChartOptions"
+                [chartType]="lineChartType"
+                [colors]="lineChartColors">
+              </canvas>
+            </div>
+          </div>
         </div>
       </div>
-  
-      <!-- Doughnut Chart Section -->
-      <h3>Répartition du Travail</h3>
-      <div class="chart-container">
-        <canvas baseChart
-          [data]="doughnutChartData"
-          [labels]="doughnutChartLabels"
-          [chartType]="doughnutChartType">
-        </canvas>
-      </div>
-  
-      <!-- Line Chart Section -->
-      <h3>Progression des Unites Traitées</h3>
-      <div class="chart-container">
-        <canvas baseChart
-          [data]="lineChartData"
-          [labels]="lineChartLabels"
-          [chartType]="lineChartType">
-        </canvas>
-      </div>
-  
-      <!-- Pie Chart Section -->
-      <h3>Comparaison des Unites Traitées vs Objectifs Individuels</h3>
-      <div class="chart-container">
-        <canvas baseChart
-          [data]="pieChartData"
-          [labels]="pieChartLabels"
-          [chartType]="pieChartType">
-        </canvas>
+
+      <!-- Full-width pie chart -->
+      <div class="full-width-chart">
+        <div class="chart-card">
+          <h3>Objectifs vs. Performance</h3>
+          <div class="chart-container pie-chart-container">
+            <canvas baseChart
+              [data]="pieChartData"
+              [labels]="pieChartLabels"
+              [chartType]="pieChartType"
+              [colors]="pieChartColors"
+              [options]="chartOptions">
+            </canvas>
+          </div>
+        </div>
       </div>
     </div>
+
+    <div class="dashboard-footer">
+      <p>Dernière mise à jour: {{ today | date:'dd/MM/yyyy HH:mm' }}</p>
+    </div>
   </div>
-  
+</div>

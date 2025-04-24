@@ -10,6 +10,7 @@ import { UserFormComponent } from './components/user-form/user-form.component';
 import { UserStatsComponent } from './components/user-stats/user-stats.component';
 import { ProducerStatsComponent } from './producer-stats/producer-stats.component';
 import { MonthlySnapshotComponent } from './monthly-snapshot/monthly-snapshot.component';
+import { GlobalStatsComponent } from './global-stats/global-stats.component';
 
 
 
@@ -26,6 +27,7 @@ const routes: Routes = [
   {path: 'userstats/:prestationId',component: UserStatsComponent},
   { path: 'calculet/:prestationId', component: CalculetTableComponent },
   {path:'MonthlySnapshot',component:MonthlySnapshotComponent},
+  {path:'GlobalStats',component:GlobalStatsComponent},
 
 
   

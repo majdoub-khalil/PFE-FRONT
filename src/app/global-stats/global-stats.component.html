@@ -1,0 +1,125 @@
+<div class="burndown-container">
+  <div class="burndown-header">
+    <h2>Production Statistics</h2>
+    <p class="subtitle">Track daily and cumulative production</p>
+  </div>
+  
+  <div class="filters-container">
+    <div class="filter-group">
+      <label for="year">Year</label>
+      <select id="year" [(ngModel)]="selectedYear" (change)="onFilterChange()">
+        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+      </select>
+    </div>
+        
+    <div class="filter-group">
+      <label for="month">Month</label>
+      <select id="month" [(ngModel)]="selectedMonth" (change)="onFilterChange()">
+        <option *ngFor="let month of months" [value]="month">{{ monthNames[month-1] }}</option>
+      </select>
+    </div>
+        
+    <div class="filter-group">
+      <label for="prestation">Service</label>
+      <select id="prestation" [(ngModel)]="selectedPrestationId" (change)="onFilterChange()">
+        <option *ngFor="let prestation of prestations" [value]="prestation.id">{{ prestation.name }}</option>
+      </select>
+    </div>
+  </div>
+  
+  <!-- Burndown Chart Section - MOVED ABOVE monthly overview -->
+  <div class="chart-container">
+    <div *ngIf="isLoading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Loading chart data...</p>
+    </div>
+        
+    <div *ngIf="hasError && !isLoading" class="error-message">
+      <div class="error-icon">!</div>
+      <p>{{ errorMessage }}</p>
+      <button class="retry-button" (click)="fetchBurndownData()">Try Again</button>
+    </div>
+        
+    <div *ngIf="!hasError" class="chart-wrapper">
+      <canvas #burndownCanvas></canvas>
+    </div>
+  </div>
+  
+  <div class="chart-info">
+    <div class="info-card">
+      <div class="info-header">
+        <div class="info-icon actual"></div>
+        <h3>Actual Progress</h3>
+      </div>
+      <p>Shows how many items the team has actually completed over time.</p>
+    </div>
+        
+    <div class="info-card">
+      <div class="info-header">
+        <div class="info-icon ideal"></div>
+        <h3>Ideal Progress</h3>
+      </div>
+      <p>Shows the ideal pace to complete all items by the end of the period.</p>
+    </div>
+        
+    <div class="info-card">
+      <div class="info-header">
+        <div class="info-icon" style="background-color: rgba(75, 192, 192, 1);"></div>
+        <h3>Daily Production</h3>
+      </div>
+      <p>Shows how many units were processed by the team each day.</p>
+    </div>
+  </div>
+  
+  <!-- General Statistics Section - NOW BELOW burndown chart -->
+  <div class="stats-container" *ngIf="!isLoadingStats && !hasStatsError && generalStats">
+    <h3 class="section-title">Monthly Overview - {{ monthNames[selectedMonth-1] }} {{ selectedYear }}</h3>
+    
+    <div class="stats-summary">
+      <div class="stat-card">
+        <h4>Total Units Processed</h4>
+        <div class="stat-value">{{ generalStats.totalUnitsProcessed }}</div>
+      </div>
+      
+      <div class="stat-card">
+        <h4>Blocked Units</h4>
+        <div class="stat-value">{{ generalStats.blockedUnits }}</div>
+      </div>
+      
+      <div class="stat-card">
+        <h4>In Progress Units</h4>
+        <div class="stat-value">{{ generalStats.inProgressUnits }}</div>
+      </div>
+    </div>
+    
+    <div class="stats-detail">
+      <div class="producer-stats">
+        <h4>Units by Producer</h4>
+        <div class="producer-list">
+          <div class="producer-item" *ngFor="let producer of getProducerKeys()">
+            <span class="producer-name">{{ producer }}</span>
+            <span class="producer-value">{{ generalStats.unitsByProducer[producer] }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="common-issue">
+        <h4>Most Common Issue</h4>
+        <p>{{ generalStats.mostCommonIssue }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading overlay for stats -->
+  <div class="loading-overlay standalone" *ngIf="isLoadingStats">
+    <div class="spinner"></div>
+    <p>Loading statistics data...</p>
+  </div>
+  
+  <!-- Error state for stats -->
+  <div class="error-message standalone" *ngIf="hasStatsError && !isLoadingStats">
+    <div class="error-icon">!</div>
+    <p>{{ statsErrorMessage }}</p>
+    <button class="retry-button" (click)="fetchGeneralStats()">Try Again</button>
+  </div>
+</div>

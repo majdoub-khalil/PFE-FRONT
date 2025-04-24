@@ -25,7 +25,55 @@ export class UserStatsComponent implements OnInit {
   public progressionData: number[] = [];
   public idealData: number[] = [];
 
-  public chartOptions: ChartOptions = { responsive: true };
+  // Enhanced chart options for better aesthetics
+  public chartOptions: ChartOptions = { 
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      duration: 1800,
+      easing: 'easeOutQuart'
+    },
+    legend: {
+      position: 'bottom',
+      labels: {
+        padding: 20,
+        fontFamily: "'Inter', 'Segoe UI', Roboto, Arial, sans-serif",
+        fontSize: 12,
+        fontColor: '#2e3a59',
+        boxWidth: 15
+      }
+    },
+    tooltips: {
+      backgroundColor: 'rgba(46, 58, 89, 0.85)',
+      titleFontFamily: "'Inter', 'Segoe UI', Roboto, Arial, sans-serif",
+      bodyFontFamily: "'Inter', 'Segoe UI', Roboto, Arial, sans-serif",
+      bodyFontSize: 14,
+      xPadding: 15,
+      yPadding: 15,
+      cornerRadius: 8,
+      displayColors: true,
+      caretSize: 8,
+      titleMarginBottom: 10
+    },
+    elements: {
+      line: {
+        tension: 0.3
+      },
+      point: {
+        radius: 4,
+        hoverRadius: 6,
+        hitRadius: 10
+      }
+    },
+    layout: {
+      padding: {
+        left: 10,
+        right: 10,
+        top: 20,
+        bottom: 10
+      }
+    }
+  };
 
   // Insight data
   topProducer: AppUser | null = null;
@@ -53,6 +101,9 @@ export class UserStatsComponent implements OnInit {
   constructor(private userService: UserService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
+    // Add smooth font loading for better appearance
+    this.loadFonts();
+    
     this.route.params.subscribe(params => {
       const prestationId = +params['prestationId'];
       if (!isNaN(prestationId)) {
@@ -65,6 +116,19 @@ export class UserStatsComponent implements OnInit {
         console.error('Invalid prestationId:', params['prestationId']);
       }
     });
+  }
+
+  // Load web fonts for better typography
+  loadFonts() {
+    const linkPoppins = document.createElement('link');
+    linkPoppins.rel = 'stylesheet';
+    linkPoppins.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap';
+    document.head.appendChild(linkPoppins);
+    
+    const linkInter = document.createElement('link');
+    linkInter.rel = 'stylesheet';
+    linkInter.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
+    document.head.appendChild(linkInter);
   }
 
   loadStats(prestationId: number) {
@@ -175,6 +239,12 @@ export class UserStatsComponent implements OnInit {
   }
 
   toggleDetail(section: string): void {
+    // Close all other sections when opening a new one for better UX
+    if (!this.expandedSections[section]) {
+      Object.keys(this.expandedSections).forEach(key => {
+        this.expandedSections[key] = false;
+      });
+    }
     this.expandedSections[section] = !this.expandedSections[section];
   }
 
