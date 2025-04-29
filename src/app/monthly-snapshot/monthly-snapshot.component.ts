@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { forkJoin } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-monthly-snapshot',
@@ -8,6 +9,7 @@ import { forkJoin } from 'rxjs';
   styleUrls: ['./monthly-snapshot.component.css']
 })
 export class MonthlySnapshotComponent implements OnInit {
+  
   statsWithNames: any[] = [];
   loading: boolean = false;
   
@@ -29,7 +31,8 @@ export class MonthlySnapshotComponent implements OnInit {
     { label: 'MISSING', value: 3 }
   ];
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private router: Router,
+    private route: ActivatedRoute,) {}
 
   ngOnInit(): void {
     this.fetchMonthlyStats();
@@ -75,5 +78,8 @@ export class MonthlySnapshotComponent implements OnInit {
     if (percentage >= 75) return 'progress-high';
     if (percentage >= 50) return 'progress-medium';
     return 'progress-low';
+  }
+  navigateToUserStats() {
+    this.router.navigate(['GlobalStats']); 
   }
 }

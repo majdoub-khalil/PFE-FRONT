@@ -259,3 +259,23 @@ button:hover {
   height: 8px;
   background-color: #f0f7ff; /* Light blue */
 }
+.stats-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.stats-btn i {
+  font-size: 16px;
+  align-items: center;
+  
+}
+.stats-btn:hover {
+  background: linear-gradient(135deg, #ff8c00, #ff5500); /* Orange gradient on hover */
+  box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3); /* Orange shadow */
+  transform: translateY(-2px);
+}
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}

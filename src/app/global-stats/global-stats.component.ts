@@ -194,7 +194,7 @@ export class GlobalStatsComponent implements OnInit, AfterViewInit {
       // Ideal progress as line
       {
         type: 'line',
-        label: 'Ideal Progress',
+        label: 'Goal',
         data: idealData,
         borderColor: 'rgba(255, 99, 132, 1)',
         backgroundColor: idealGradient,
@@ -322,4 +322,5 @@ export class GlobalStatsComponent implements OnInit, AfterViewInit {
     }
     return [];
   }
+  
 }
