@@ -3,6 +3,8 @@ import { AppUser } from '../models/app-user.model';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActeTraitement } from '../models/ActeTraitement ';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-calculet-table',
@@ -85,6 +87,7 @@ export class CalculetTableComponent implements OnInit {
   }
   
   onPrestationChange(newPrestationId: number) {
+    this.prestationId = newPrestationId;
     this.loadData(); 
     this.router.navigate(['/calculet', newPrestationId]);
   }
@@ -130,22 +133,54 @@ export class CalculetTableComponent implements OnInit {
   
       return hasMatchingActe;
     });
-  
-    // ✅ Filter pilots by prestation only — no date filter
-    this.filteredPilots = this.users.filter(user => {
+
+    // ✅ Filter pilots by prestation only — then fetch live data for each
+    const pilotsMatchingPrestation = this.users.filter(user => {
       return (
         this.isPilot(user) &&
         user.pilotData &&
         user.prestation?.id_prestation === this.prestationId
       );
     });
+
+    console.log(`✅ Pilots matching prestation: ${pilotsMatchingPrestation.length}`);
+    
+    // Create an array of observables for each pilot's live data
+    const livePilotDataRequests = pilotsMatchingPrestation.map(pilot => {
+      if (!pilot.id) return of(null);
+      
+      return this.userService.getLivePilotData(pilot.id).pipe(
+        map(liveData => {
+          // Create a copy of the pilot to avoid modifying the original users array
+          const pilotWithLiveData = {...pilot};
+          // Update the pilot data with live data
+          pilotWithLiveData.pilotData = liveData;
+          return pilotWithLiveData;
+        }),
+        catchError(err => {
+          console.error(`Failed to fetch live data for pilot ${pilot.id}`, err);
+          // Return the original pilot if live data fetch fails
+          return of(pilot);
+        })
+      );
+    });
+    
+    // If we have pilots with matching prestation, fetch their live data
+    if (livePilotDataRequests.length > 0) {
+      forkJoin(livePilotDataRequests).subscribe(updatedPilots => {
+        // Filter out any null values from the result
+        this.filteredPilots = updatedPilots.filter(pilot => pilot !== null) as AppUser[];
+        console.log(`✅ Got live data for ${this.filteredPilots.length} pilots`);
+        console.log('🧪 Final filteredPilots list with live data:', this.filteredPilots.map(u => u.id));
+        this.cdr.detectChanges();
+      });
+    } else {
+      this.filteredPilots = [];
+      this.cdr.detectChanges();
+    }
   
     console.log(`✅ Producers matching date & prestation: ${this.filteredProducers.length}`);
     console.log('🧪 Final filteredProducers list:', this.filteredProducers.map(u => u.id));
-    console.log(`✅ Pilots matching prestation only: ${this.filteredPilots.length}`);
-    console.log('🧪 Final filteredPilots list:', this.filteredPilots.map(u => u.id));
-  
-    this.cdr.detectChanges();
   }
   
   saveProducerData(user: AppUser) {

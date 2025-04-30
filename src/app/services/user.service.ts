@@ -8,6 +8,7 @@ import { ActeTraitement } from '../models/ActeTraitement ';
 import { tap } from 'rxjs/operators';
 import { MonthlyProducerStats } from '../models/MonthlyProducerStats';
 import { BurndownPoint } from '../models/BurndownPoint';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -113,6 +114,22 @@ export class UserService {
    getGeneralMonthlyStatistics(year: number, month: number): Observable<Map<string, any>> {
     return this.http.get<Map<string, any>>(`${this.baseUrl}/api/stats/general-stats?year=${year}&month=${month}`);
   }
+  //PILOT DATA SNAPSHOT FETCH 
+  getMonthlyPilotStats(pilotId: number, year: number, month: number, prestationId: number): Observable<any> {
+    const url = `${this.baseUrl}/api/monthly-pilot-stats`;
+  
+    const params = new HttpParams()
+      .set('pilotId', pilotId.toString())
+      .set('year', year.toString())
+      .set('month', month.toString())
+      .set('prestationId', prestationId.toString());
+  
+    return this.http.get(url, { params });
+  }
+  getLivePilotData(pilotId: number): Observable<PilotData> {
+    return this.http.get<PilotData>(`${this.baseUrl}/calculet-live-pilot-data?pilotId=${pilotId}`);
+  }
+  
   
   
 }
