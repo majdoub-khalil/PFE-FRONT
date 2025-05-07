@@ -14,8 +14,9 @@ import { GlobalStatsComponent } from './global-stats/global-stats.component';
 
 
 
+
 const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', component: CalculetTableComponent },
   { path: 'add', component: AddPageComponent },
   { path: 'edit/:id', component: EditPageComponent },
   {path: 'chart', component: TaskChartComponent},

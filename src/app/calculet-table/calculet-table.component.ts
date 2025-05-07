@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ActeTraitement } from '../models/ActeTraitement ';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { PilotStats } from '../models/PilotStats';
+import { MonthlyPilotStats } from '../models/MonthlyPilotStats';
 
 @Component({
   selector: 'app-calculet-table',
@@ -19,6 +21,8 @@ export class CalculetTableComponent implements OnInit {
   acteTraitements: ActeTraitement[] = [];
   filteredProducers: AppUser[] = [];
   filteredPilots: AppUser[] = [];
+  pilotStats: Map<number, PilotStats> = new Map<number, PilotStats>();
+  expandedPilotStats: Set<number> = new Set<number>();
 
   selectedMonth: number = new Date().getMonth() + 1;
   selectedYear: number = new Date().getFullYear();
@@ -101,6 +105,7 @@ export class CalculetTableComponent implements OnInit {
     // Reset filtered arrays
     this.filteredProducers = [];
     this.filteredPilots = [];
+    this.pilotStats.clear();
   
     // ✅ Filter producers with date + prestation
     this.filteredProducers = this.users.filter(user => {
@@ -172,6 +177,9 @@ export class CalculetTableComponent implements OnInit {
         this.filteredPilots = updatedPilots.filter(pilot => pilot !== null) as AppUser[];
         console.log(`✅ Got live data for ${this.filteredPilots.length} pilots`);
         console.log('🧪 Final filteredPilots list with live data:', this.filteredPilots.map(u => u.id));
+        
+        // After we have the filtered pilots, get stats for each
+        this.loadPilotStats();
         this.cdr.detectChanges();
       });
     } else {
@@ -181,6 +189,50 @@ export class CalculetTableComponent implements OnInit {
   
     console.log(`✅ Producers matching date & prestation: ${this.filteredProducers.length}`);
     console.log('🧪 Final filteredProducers list:', this.filteredProducers.map(u => u.id));
+  }
+  
+  // Load pilot stats for all filtered pilots
+  loadPilotStats() {
+    this.pilotStats.clear();
+    
+    // Create an array of observables for each pilot's stats
+    const statsRequests = this.filteredPilots.map(pilot => {
+      if (!pilot.id) return of(null);
+      
+      return this.userService.getPilotStats(pilot.id).pipe(
+        map(stats => {
+          return { pilotId: pilot.id, stats };
+        }),
+        catchError(err => {
+          console.error(`Failed to fetch stats for pilot ${pilot.id}`, err);
+          return of(null);
+        })
+      );
+    });
+    
+    if (statsRequests.length > 0) {
+      forkJoin(statsRequests).subscribe(results => {
+        results.forEach(result => {
+          if (result && result.pilotId && result.stats) {
+            this.pilotStats.set(result.pilotId, result.stats);
+          }
+        });
+        console.log('📊 Pilot stats loaded:', this.pilotStats);
+        this.cdr.detectChanges();
+      });
+    }
+  }
+  
+  togglePilotStats(pilotId: number) {
+    if (this.expandedPilotStats.has(pilotId)) {
+      this.expandedPilotStats.delete(pilotId);
+    } else {
+      this.expandedPilotStats.add(pilotId);
+    }
+  }
+  
+  isPilotStatsExpanded(pilotId: number): boolean {
+    return this.expandedPilotStats.has(pilotId);
   }
   
   saveProducerData(user: AppUser) {

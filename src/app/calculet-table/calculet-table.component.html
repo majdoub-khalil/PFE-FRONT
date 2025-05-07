@@ -127,7 +127,12 @@
         <tbody>
           <ng-container *ngFor="let user of filteredPilots">
             <tr *ngIf="isPilot(user) && user.pilotData" class="data-row">
-              <td class="name-cell"><i class="fas fa-user-tie"></i> {{ user.fullName }}</td>
+              <td class="name-cell">
+                <span class="pilot-name" (click)="togglePilotStats(user.id!)">
+                  <i [class]="isPilotStatsExpanded(user.id!) ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i>
+                  <i class="fas fa-user-tie"></i> {{ user.fullName }}
+                </span>
+              </td>
               <td><input class="data-input" [(ngModel)]="user.pilotData.quantiteCumulee" /></td>
               <td><input class="data-input" [(ngModel)]="user.pilotData.quantiteCible" /></td>
               <td><input class="data-input" [(ngModel)]="user.pilotData.previsionnelOrange" /></td>
@@ -142,6 +147,39 @@
                 <button class="save-btn" (click)="savePilotData(user)">
                   <i class="fas fa-save"></i> Save
                 </button>
+              </td>
+            </tr>
+            <!-- Pilot Stats Row -->
+            <tr *ngIf="isPilot(user) && user.pilotData && isPilotStatsExpanded(user.id!)" class="pilot-stats-row">
+              <td colspan="12">
+                <div class="stats-container">
+                  <div class="stats-title">
+                    <i class="fas fa-chart-line"></i> Stats
+                  </div>
+                  <div class="stats-content" *ngIf="pilotStats.get(user.id!)">
+                    <div class="stat-item">
+                      <div class="stat-label">Completion Rate</div>
+                      <div class="stat-value" [ngClass]="{'good': pilotStats.get(user.id!)!.completionRate >= 75, 'warning': pilotStats.get(user.id!)!.completionRate < 75 && pilotStats.get(user.id!)!.completionRate >= 50, 'bad': pilotStats.get(user.id!)!.completionRate < 50}">
+                        {{ pilotStats.get(user.id!)!.completionRate | number:'1.0-1' }}%
+                      </div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-label">Blockage Rate</div>
+                      <div class="stat-value" [ngClass]="{'good': pilotStats.get(user.id!)!.blockageRate <= 10, 'warning': pilotStats.get(user.id!)!.blockageRate > 10 && pilotStats.get(user.id!)!.blockageRate <= 25, 'bad': pilotStats.get(user.id!)!.blockageRate > 25}">
+                        {{ pilotStats.get(user.id!)!.blockageRate | number:'1.0-1' }}%
+                      </div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-label">Target Performance</div>
+                      <div class="stat-value" [ngClass]="{'good': pilotStats.get(user.id!)!.targetPerformance >= 90, 'warning': pilotStats.get(user.id!)!.targetPerformance < 90 && pilotStats.get(user.id!)!.targetPerformance >= 70, 'bad': pilotStats.get(user.id!)!.targetPerformance < 70}">
+                        {{ pilotStats.get(user.id!)!.targetPerformance | number:'1.0-1' }}%
+                      </div>
+                    </div>
+                  </div>
+                  <div class="stats-loading" *ngIf="!pilotStats.get(user.id!)">
+                    <i class="fas fa-spinner fa-spin"></i> Loading stats...
+                  </div>
+                </div>
               </td>
             </tr>
           </ng-container>

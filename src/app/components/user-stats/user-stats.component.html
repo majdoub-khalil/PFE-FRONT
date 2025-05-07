@@ -1,7 +1,7 @@
 <!-- Chart Section -->
 <div class="charts-wrapper">
   
-  <!-- First chart (pie) -->
+  <!-- First chart (pie) with values displayed -->
   <div *ngIf="chartLabels.length" class="chart-section">
     <h2>Producer Statistics</h2>
     <div class="chart-container">
@@ -19,9 +19,19 @@
         [chartType]="chartType">
       </canvas>
     </div>
+    <!-- Stats display table added below the chart -->
+    <div class="stats-display">
+      <div class="stats-row" *ngFor="let label of chartLabels; let i = index">
+        <span class="stats-label" [style.color]="['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'][i % 5]">
+          <span class="color-dot" [style.background-color]="['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'][i % 5]"></span>
+          {{label}}:
+        </span>
+        <span class="stats-value">{{chartData[i]}}</span>
+      </div>
+    </div>
   </div>
 
-  <!-- Second chart (doughnut burndown) -->
+  <!-- Second chart (doughnut burndown) with values displayed -->
   <div *ngIf="burndownData.length" class="chart-section">
     <h2>Burndown Progress</h2>
     <div class="chart-container">
@@ -38,6 +48,16 @@
         [options]="chartOptions"
         [chartType]="burndownType">
       </canvas>
+    </div>
+    <!-- Stats display for burndown chart -->
+    <div class="stats-display">
+      <div class="stats-row" *ngFor="let label of burndownLabels; let i = index">
+        <span class="stats-label" [style.color]="['#36A2EB', '#FF6384'][i % 2]">
+          <span class="color-dot" [style.background-color]="['#36A2EB', '#FF6384'][i % 2]"></span>
+          {{label}}:
+        </span>
+        <span class="stats-value">{{burndownData[i]}}</span>
+      </div>
     </div>
   </div>
 
@@ -88,7 +108,7 @@
 
 </div>
 
-<!-- Dashboard Insights Section -->
+<!-- Dashboard Insights Section (unchanged) -->
 <div class="dashboard-insights">
   <h2>🎯 Performance Dashboard</h2>
 

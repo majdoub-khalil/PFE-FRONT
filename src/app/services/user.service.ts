@@ -130,8 +130,20 @@ export class UserService {
     return this.http.get<PilotData>(`${this.baseUrl}/calculet-live-pilot-data?pilotId=${pilotId}`);
   }
   
-  
-  
+  getPilotStats(pilotId: number): Observable<{
+    completionRate: number;
+    blockageRate: number;
+    targetPerformance: number;
+  }> {
+    return this.http.get<{
+      completionRate: number;
+      blockageRate: number;
+      targetPerformance: number;
+    }>(`${this.baseUrl}/api/stats/pilotstats/${pilotId}`);
+  }
 }
+  
+  
+
 export { AppUser };
 
