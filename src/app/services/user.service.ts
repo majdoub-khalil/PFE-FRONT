@@ -134,11 +134,13 @@ export class UserService {
     completionRate: number;
     blockageRate: number;
     targetPerformance: number;
+    RAFPerformance: number;
   }> {
     return this.http.get<{
       completionRate: number;
       blockageRate: number;
       targetPerformance: number;
+      RAFPerformance: number;
     }>(`${this.baseUrl}/api/stats/pilotstats/${pilotId}`);
   }
 }

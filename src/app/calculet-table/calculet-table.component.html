@@ -158,11 +158,19 @@
                   </div>
                   <div class="stats-content" *ngIf="pilotStats.get(user.id!)">
                     <div class="stat-item">
-                      <div class="stat-label">Completion Rate</div>
+                      <div class="stat-label">% RAF</div>
+                      <div class="stat-value" [ngClass]="{'good': pilotStats.get(user.id!)!.RAFPerformance >= 90, 'warning': pilotStats.get(user.id!)!.RAFPerformance < 90 && pilotStats.get(user.id!)!.RAFPerformance >= 70, 'bad': pilotStats.get(user.id!)!.RAFPerformance < 70}">
+                        {{ pilotStats.get(user.id!)!.RAFPerformance | number:'1.0-1' }}%
+                      </div>
+                    </div>
+                  
+                    <div class="stat-item">
+                      <div class="stat-label">Objective Cible</div>
                       <div class="stat-value" [ngClass]="{'good': pilotStats.get(user.id!)!.completionRate >= 75, 'warning': pilotStats.get(user.id!)!.completionRate < 75 && pilotStats.get(user.id!)!.completionRate >= 50, 'bad': pilotStats.get(user.id!)!.completionRate < 50}">
                         {{ pilotStats.get(user.id!)!.completionRate | number:'1.0-1' }}%
                       </div>
                     </div>
+                    
                     <div class="stat-item">
                       <div class="stat-label">Blockage Rate</div>
                       <div class="stat-value" [ngClass]="{'good': pilotStats.get(user.id!)!.blockageRate <= 10, 'warning': pilotStats.get(user.id!)!.blockageRate > 10 && pilotStats.get(user.id!)!.blockageRate <= 25, 'bad': pilotStats.get(user.id!)!.blockageRate > 25}">
@@ -170,7 +178,7 @@
                       </div>
                     </div>
                     <div class="stat-item">
-                      <div class="stat-label">Target Performance</div>
+                      <div class="stat-label">Objective actuelle</div>
                       <div class="stat-value" [ngClass]="{'good': pilotStats.get(user.id!)!.targetPerformance >= 90, 'warning': pilotStats.get(user.id!)!.targetPerformance < 90 && pilotStats.get(user.id!)!.targetPerformance >= 70, 'bad': pilotStats.get(user.id!)!.targetPerformance < 70}">
                         {{ pilotStats.get(user.id!)!.targetPerformance | number:'1.0-1' }}%
                       </div>
