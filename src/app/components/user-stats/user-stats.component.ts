@@ -3,6 +3,7 @@ import { ChartOptions, ChartType } from 'chart.js';
 import { UserService } from '../../services/user.service';
 import { AppUser } from 'src/app/services/user.service';
 import { ActivatedRoute } from '@angular/router';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-user-stats',
@@ -15,7 +16,7 @@ export class UserStatsComponent implements OnInit {
   public chartData: number[] = [];
   public chartType: ChartType = 'pie';
 
-  public burndownLabels: string[] = ['Total work done', 'Objectif Commun PL'];
+  public burndownLabels: string[] = ['Objectif', 'Quantité Cumulée'];
   public burndownData: number[] = [];
   public burndownType: ChartType = 'doughnut';
 
@@ -24,6 +25,10 @@ export class UserStatsComponent implements OnInit {
   public goalData: number[] = [];
   public progressionData: number[] = [];
   public idealData: number[] = [];
+
+  // Date filtering
+  selectedMonth: number = new Date().getMonth() + 1;
+  selectedYear: number = new Date().getFullYear();
 
   // Enhanced chart options for better aesthetics
   public chartOptions: ChartOptions = { 
@@ -101,11 +106,16 @@ export class UserStatsComponent implements OnInit {
   constructor(private userService: UserService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    // Add smooth font loading for better appearance
     this.loadFonts();
     
-    this.route.params.subscribe(params => {
+    combineLatest([
+      this.route.params,
+      this.route.queryParams
+    ]).subscribe(([params, queryParams]) => {
       const prestationId = +params['prestationId'];
+      this.selectedMonth = +queryParams['month'] || new Date().getMonth() + 1;
+      this.selectedYear = +queryParams['year'] || new Date().getFullYear();
+
       if (!isNaN(prestationId)) {
         this.loadStats(prestationId);
         this.loadBurndownData(prestationId);
@@ -132,32 +142,45 @@ export class UserStatsComponent implements OnInit {
   }
 
   loadStats(prestationId: number) {
-    this.userService.getProducerStats(prestationId).subscribe((stats) => {
-      this.chartLabels = Object.keys(stats);
-      this.chartData = Object.values(stats);
-    });
+    this.userService.getProducerStats(prestationId, this.selectedMonth, this.selectedYear)
+      .subscribe((stats) => {
+        this.chartLabels = Object.keys(stats);
+        this.chartData = Object.values(stats);
+      });
   }
 
   loadBurndownData(prestationId: number) {
-    this.userService.getBurndownStats(prestationId).subscribe((data) => {
-      this.burndownData = [data.totalObjectifsIndiv, data.objectifsCommunPL];
-    });
+    this.userService.getBurndownStats(prestationId, this.selectedMonth, this.selectedYear)
+      .subscribe((data) => {
+        this.burndownData = [data.totalObjectifsIndiv, data.objectifsCommunPL];
+      });
   }
 
   generateProgressionChart(prestationId: number) {
-    this.userService.getBurndownStats(prestationId).subscribe((data) => {
-      const goal = data.objectifsCommunPL;
-      const days = 10;
+    this.userService.getBurndownStats(prestationId, this.selectedMonth, this.selectedYear)
+      .subscribe((data) => {
+        const goal = data.objectifsCommunPL;
+        const days = 10;
 
-      this.realBurndownLabels = Array.from({ length: days }, (_, i) => `Day ${i + 1}`);
-      this.progressionData = [5, 15, 30, 50, 70, 95, 120, 140, 160, 175];
-      this.goalData = Array(days).fill(goal);
-      this.idealData = Array.from({ length: days }, (_, i) => Math.round((goal / (days - 1)) * i));
-    });
+        this.realBurndownLabels = Array.from({ length: days }, (_, i) => `Day ${i + 1}`);
+        this.progressionData = [5, 15, 30, 50, 70, 95, 120, 140, 160, 175];
+        this.goalData = Array(days).fill(goal);
+        this.idealData = Array.from({ length: days }, (_, i) => Math.round((goal / (days - 1)) * i));
+      });
   }
 
   loadUserInsights(prestationId: number) {
-    this.userService.getAllUsers().subscribe(users => {
+    combineLatest([
+      this.userService.getAllUsers(),
+      this.userService.getAllActes()
+    ]).subscribe(([users, actes]) => {
+      const filteredActes = actes.filter(acte => {
+        if (!acte.date_validation) return false;
+        const acteDate = new Date(acte.date_validation);
+        return acteDate.getMonth() + 1 === this.selectedMonth && 
+               acteDate.getFullYear() === this.selectedYear;
+      });
+
       const producers = users.filter(u =>
         u.role === 'PRODUCER' &&
         u.producerData &&
@@ -166,34 +189,46 @@ export class UserStatsComponent implements OnInit {
       );
 
       this.totalProducers = producers.length;
-      this.currentProducers = producers;
+      this.currentProducers = producers.map(producer => {
+        const userActes = filteredActes.filter(acte => 
+          acte.affectation === producer.id?.toString()
+        );
 
-      this.metGoals = [];
-      this.fallingBehind = [];
-      let totalObjective = 0;
-      let top: AppUser | null = null;
+        const treated = userActes.reduce((sum, acte) => 
+          sum + (acte.quantite || 0), 0
+        );
 
-      producers.forEach(prod => {
-        const treated = prod.producerData!.unitesTraites;
-        const objective = prod.producerData!.objectifsIndiv;
-        totalObjective += objective;
-
-        if (!top || treated > (top.producerData?.unitesTraites || 0)) {
-          top = prod;
-        }
-
-        if (treated >= objective) {
-          this.metGoals.push(prod);
-        } else {
-          this.fallingBehind.push(prod);
-        }
+        return {
+          ...producer,
+          producerData: {
+            ...producer.producerData!,
+            unitesTraites: treated
+          }
+        };
       });
+
+      this.metGoals = this.currentProducers.filter(p => 
+        p.producerData!.unitesTraites >= p.producerData!.objectifsIndiv
+      );
+
+      this.fallingBehind = this.currentProducers.filter(p => 
+        p.producerData!.unitesTraites < p.producerData!.objectifsIndiv
+      );
+
+      const totalObjective = this.currentProducers.reduce((sum, p) => 
+        sum + p.producerData!.objectifsIndiv, 0
+      );
 
       this.averageObjective = this.totalProducers > 0
         ? Math.round(totalObjective / this.totalProducers)
         : 0;
 
-      this.topProducer = top;
+      this.topProducer = this.currentProducers.reduce((top, prod) => {
+        return (prod.producerData!.unitesTraites > (top?.producerData?.unitesTraites || 0))
+          ? prod
+          : top;
+      }, null as AppUser | null);
+
       this.generateDashboardInsights(prestationId);
     });
   }
@@ -206,14 +241,8 @@ export class UserStatsComponent implements OnInit {
       p.prestation?.id_prestation === prestationId
     );
 
-    const topProducer = this.currentProducers.reduce((top, prod) => {
-      return prod.producerData!.unitesTraites > (top?.producerData?.unitesTraites || 0)
-        ? prod
-        : top;
-    }, null as AppUser | null);
-
-    const topProducerName = topProducer
-      ? `${topProducer.fullName} (ID: ${topProducer.id})`
+    const topProducerName = this.topProducer
+      ? `${this.topProducer.fullName} (ID: ${this.topProducer.id})`
       : 'N/A';
 
     this.dashboardInsights = {
@@ -229,17 +258,17 @@ export class UserStatsComponent implements OnInit {
 
   loadAdditionalStats(prestationId?: number) {
     if (prestationId !== undefined) {
-      this.userService.getProducerInsights(prestationId).subscribe((data) => {
-        this.averageEfficiencyRate = Math.round(data.averageEfficiencyRate);
-        this.averageBlockageRatio = Math.round(data.averageBlockageRatio);
-      });
+      this.userService.getProducerInsights(prestationId, this.selectedMonth, this.selectedYear)
+        .subscribe((data) => {
+          this.averageEfficiencyRate = Math.round(data.averageEfficiencyRate);
+          this.averageBlockageRatio = Math.round(data.averageBlockageRatio);
+        });
     } else {
       console.error('Prestation ID is missing');
     }
   }
 
   toggleDetail(section: string): void {
-    // Close all other sections when opening a new one for better UX
     if (!this.expandedSections[section]) {
       Object.keys(this.expandedSections).forEach(key => {
         this.expandedSections[key] = false;

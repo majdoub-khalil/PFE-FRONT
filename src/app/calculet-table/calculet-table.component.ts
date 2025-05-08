@@ -262,7 +262,13 @@ export class CalculetTableComponent implements OnInit {
   }
 
   navigateToUserStats() {
-    this.router.navigate(['/userstats', this.prestationId]);
+    // Pass selected date as query parameters
+    this.router.navigate(['/userstats', this.prestationId], {
+      queryParams: {
+        month: this.selectedMonth,
+        year: this.selectedYear
+      }
+    });
   }
 
   goToProducerStats(producerId: number) {

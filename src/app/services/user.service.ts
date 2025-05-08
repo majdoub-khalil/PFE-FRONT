@@ -62,17 +62,17 @@ export class UserService {
   updatePilotData(pilotId: number, data: PilotData): Observable<PilotData> {
     return this.http.put<PilotData>(`${this.baseUrl}/pilots/${pilotId}`, data);
   }
-  getProducerStats(prestationId: number): Observable<{ [key: string]: number }> {
+  getProducerStats(prestationId: number, month: number, year: number): Observable<{ [key: string]: number }> {
     return this.http.get<{ [key: string]: number }>(
-      `${this.baseUrl}/producers/stats/${prestationId}`
+      `${this.baseUrl}/producers/stats/${prestationId}?month=${month}&year=${year}`
     );
-  }
+}
   
-  getBurndownStats(prestationId: number): Observable<{ [key: string]: number }> {
-    return this.http.get<{ [key: string]: number }>(
-      `http://localhost:8080/burndown-stats/${prestationId}`
-    );
-  }
+getBurndownStats(prestationId: number, month: number, year: number): Observable<{ [key: string]: number }> {
+  return this.http.get<{ [key: string]: number }>(
+    `http://localhost:8080/burndown-stats/${prestationId}?month=${month}&year=${year}`
+  );
+}
   
   getAdditionalStats(prestationId: number): Observable<{ completionRatio: number; staffingUtilization: number }> {
     return this.http.get<{ completionRatio: number; staffingUtilization: number }>(
@@ -80,11 +80,11 @@ export class UserService {
     );
   }
   
-  getProducerInsights(prestationId: number): Observable<{ averageEfficiencyRate: number; averageBlockageRatio: number }> {
+  getProducerInsights(prestationId: number, month: number, year: number): Observable<{ averageEfficiencyRate: number; averageBlockageRatio: number }> {
     return this.http.get<{ averageEfficiencyRate: number; averageBlockageRatio: number }>(
-      `http://localhost:8080/producerInsights/${prestationId}`
+      `http://localhost:8080/producerInsights/${prestationId}?month=${month}&year=${year}`
     );
-  }
+}
   
   getUserById(id: number): Observable<AppUser> {
     return this.http.get<AppUser>(`${this.baseUrl}/users/id/${id}`);
