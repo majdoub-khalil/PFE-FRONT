@@ -52,9 +52,20 @@ export class GlobalStatsComponent implements OnInit, AfterViewInit {
       this.years.push(currentYear - i);
     }
   }
+  producerIdNameMap: { [id: string]: string } = {};
 
   ngOnInit(): void {
     this.loadInitialData();
+
+  this.userService.getAllUsers().subscribe(users => {
+    users
+      .filter(u => u.role === 'PRODUCER')
+      .forEach(u => {
+        if (u.id && u.fullName) {
+          this.producerIdNameMap[u.id.toString()] = u.fullName;
+        }
+      });
+  });
   }
   
   ngAfterViewInit(): void {

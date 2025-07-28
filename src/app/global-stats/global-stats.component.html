@@ -97,8 +97,7 @@
         <h4>Units by Producer</h4>
         <div class="producer-list">
           <div class="producer-item" *ngFor="let producer of getProducerKeys()">
-            <span class="producer-name">{{ producer }}</span>
-            <span class="producer-value">{{ generalStats.unitsByProducer[producer] }}</span>
+            <span class="producer-name">{{ producerIdNameMap[producer] || producer }}</span>            <span class="producer-value">{{ generalStats.unitsByProducer[producer] }}</span>
           </div>
         </div>
       </div>

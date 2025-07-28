@@ -277,7 +277,7 @@ export class CalculetTableComponent implements OnInit {
 
   labelMap: any = {
     1: { unitesTraites: 'Dossiers Traités', unitesBloques: 'Dossiers Bloqués', unitesEnCours: 'Dossiers En Cours' },
-    2: { unitesTraites: 'Unitées Traitées', unitesBloques: 'Unitées Bloquées', unitesEnCours: 'Unitées En Cours' },
-    3: { unitesTraites: 'KM Traités', unitesBloques: 'KM Bloqués', unitesEnCours: 'KM En Cours' }
+    2: { unitesTraites: 'Dossiers Traitées', unitesBloques: 'Dossiers Bloquées', unitesEnCours: 'Dossiers En Cours' },
+    3: { unitesTraites: 'Adresses Traités', unitesBloques: 'Adresses Bloqués', unitesEnCours: 'Adresses En Cours' }
   };
 }
